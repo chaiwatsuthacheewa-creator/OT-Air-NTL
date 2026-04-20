@@ -51,6 +51,7 @@
       --danger: #fb7185;
       --danger-soft: #4c0519;
       --shadow: 0 10px 25px rgba(0,0,0,0.5);
+      --backdrop: rgba(0, 0, 0, 0.75);
     }
 
     *{box-sizing:border-box}
@@ -100,6 +101,8 @@
     .ticket .duration { font-size: 13px; color: var(--muted); font-weight: 500; display: block; margin-top: 6px; }
 
     .empty-day { text-align: center; color: var(--muted); font-size: 18px; padding: 40px 0; font-weight: 500; opacity: 0.8;}
+
+    /* Skeleton Loading */
     .skeleton-box { background: linear-gradient(90deg, var(--border) 25%, var(--surface-2) 50%, var(--border) 75%); background-size: 200% 100%; animation: skeletonLoading 1.5s infinite; border-radius: 8px; }
     @keyframes skeletonLoading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
@@ -122,20 +125,24 @@
     .time-sel { flex: 1; appearance: none; -webkit-appearance: none; background: transparent; border: none; font-size: 20px; font-weight: 700; color: var(--text); text-align: center; padding: 8px; cursor: pointer; outline: none;}
     .time-sep { font-weight: 700; color: var(--muted); font-size: 20px;}
 
-    /* Modals */
-    .modal { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: var(--backdrop); z-index: 9999; padding: 20px; opacity: 0; transition: opacity 0.2s ease;}
-    .modal.show { display: flex; opacity: 1; }
-    .modal-card { width: min(1300px, 95%); max-height: 90vh; background: var(--surface-2); border: 1px solid var(--border); border-radius: 24px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.3); transform: scale(0.95); transition: transform 0.2s ease;}
-    .modal.show .modal-card { transform: scale(1); }
+    /* Modals - Smooth Transitions */
+    .modal { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: var(--backdrop); backdrop-filter: blur(5px); z-index: 9999; padding: 20px; opacity: 0; visibility: hidden; pointer-events: none; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .modal.show { opacity: 1; visibility: visible; pointer-events: auto; }
+    .modal-card { width: min(1300px, 95%); max-height: 90vh; background: var(--surface-2); border: 1px solid var(--border); border-radius: 24px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.3); transform: scale(0.95) translateY(10px); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .modal.show .modal-card { transform: scale(1) translateY(0); }
     
     .modal-head { background: var(--surface); border-bottom: 1px solid var(--border); padding: 24px 32px; display: flex; justify-content: space-between; align-items: center; }
     .modal-title-wrap h3 { margin: 0; font-size: 26px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 12px;}
     .modal-title-wrap h3 span { color: var(--primary-2); }
-    .modal-body { padding: 32px; flex: 1; overflow-y: auto; }
+    .modal-body { padding: 32px; flex: 1; overflow-y: auto; transition: opacity 0.3s ease; }
+
+    .pro-spinner { width: 56px; height: 56px; border: 6px solid var(--primary-soft); border-top-color: var(--primary-2); border-radius: 50%; animation: proSpin 1s cubic-bezier(0.55, 0.15, 0.45, 0.85) infinite; margin: 0 auto 20px auto; }
+    @keyframes proSpin { 100% { transform: rotate(360deg); } }
 
     .dept-tag { padding: 6px 14px; border-radius: 8px; font-size: 15px; font-weight: 600; display: inline-block; }
+    .cc-tag { font-size: 14px; font-weight: 500; color: var(--muted); border: 1px solid var(--border); padding: 4px 10px; border-radius: 6px; background: var(--bg-color); }
 
-    /* Form */
+    /* Form Grid */
     .entry-list { display: flex; flex-direction: column; gap: 28px; }
     .entry-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px; border-left: 5px solid var(--primary-2);}
     .entry-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px dashed var(--border); }
@@ -143,7 +150,7 @@
     .entry-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; }
     .field { display: flex; flex-direction: column; gap: 10px; }
     .field label { font-size: 16px; font-weight: 600; color: var(--muted); }
-    .col-3 { grid-column: span 3; } .col-4 { grid-column: span 4; } .col-6 { grid-column: span 6; }
+    .col-3 { grid-column: span 3; } .col-4 { grid-column: span 4; } .col-6 { grid-column: span 6; } .col-12 { grid-column: span 12; }
 
     .sticky-actions { position: sticky; bottom: 0; background: linear-gradient(180deg, transparent, var(--surface-2) 20%); padding-top: 24px; }
     .modal-actions { display: flex; flex-wrap: wrap; gap: 16px; justify-content: flex-end; background: var(--surface); padding: 24px; border-radius: var(--radius-sm); border: 1px solid var(--border);}
@@ -155,7 +162,7 @@
       .col-3, .col-4 { grid-column: span 6; }
     }
     @media (max-width: 600px){
-      .col-3, .col-4, .col-6 { grid-column: span 12; }
+      .col-3, .col-4, .col-6, .col-12 { grid-column: span 12; }
       .modal-actions button{ width: 100%; }
       .container { padding: 16px; }
       .top-nav { flex-direction: column; align-items: flex-start; gap: 16px; }
@@ -179,7 +186,7 @@
         <div style="display: flex; flex-direction: column; gap: 12px;">
           <label style="font-size: 16px; font-weight: 600; color: var(--muted);">เลือกวันที่เริ่มต้น</label>
           <input type="date" id="selectedDate">
-          <button class="btn-secondary" type="button" onclick="loadBySelectedDate()">รีเฟรชข้อมูล</button>
+          <button class="btn-secondary" type="button" onclick="loadBySelectedDate()">รีเฟรชข้อมูลล่าสุด</button>
         </div>
       </div>
       <div class="sidebar-footer">
@@ -198,22 +205,21 @@
             <span id="themeIconWrap">☀️</span>
             <span id="themeTextWrap">โหมดกลางวัน</span>
           </button>
-          <div class="update-indicator" id="loadingStatus"><span class="dot" id="liveDot"></span> <span id="statusText">เชื่อมต่อระบบ</span></div>
+          <div class="update-indicator" id="loadingStatus"><span class="dot" id="liveDot"></span> <span id="statusText">ซิงค์อัตโนมัติ</span></div>
         </div>
       </header>
 
       <div class="container" id="dashboardContainer">
-        <div class="b-card">
-          <div class="skeleton-box" style="width: 300px; height: 40px; margin-bottom: 24px;"></div>
-          <div class="grid-4">
-            <div class="skeleton-box" style="height: 200px;"></div>
-            <div class="skeleton-box" style="height: 200px;"></div>
-            <div class="skeleton-box" style="height: 200px;"></div>
-            <div class="skeleton-box" style="height: 200px;"></div>
-          </div>
         </div>
-      </div>
     </main>
+  </div>
+
+  <div class="modal" id="loadingModal" style="z-index: 100000;">
+    <div class="modal-card" style="width: auto; background: var(--surface); padding: 40px 60px; text-align: center; display: flex; flex-direction: column; align-items: center; border-radius: 28px;">
+      <div class="pro-spinner"></div>
+      <h3 style="margin: 0; color: var(--text); font-size: 22px; font-weight: 700;">กำลังซิงค์ข้อมูล...</h3>
+      <p style="margin: 10px 0 0 0; color: var(--muted); font-size: 16px;">กรุณารอสักครู่ ระบบกำลังสื่อสารกับฐานข้อมูล</p>
+    </div>
   </div>
 
   <div class="modal" id="formModal" onclick="handleOverlayClose(event, 'formModal')">
@@ -249,6 +255,14 @@
   </div>
 
   <script>
+    // 👇👇👇 1. วางลิงก์ Web App (API URL) ใหม่ตรงนี้ครับ 👇👇👇
+    const API_URL = "https://script.google.com/macros/s/AKfycbw-CQGyhcjs7SXxMWZDlAYhF7uyWihwXqXEuxQAMyBYyfCTwbtE2-rMeBnbbfr0q_Y/exec"; // (อย่าลืมใช้ลิงก์จากที่ Deploy ใหม่)
+    // 👆👆👆 ------------------------------------------------ 👆👆👆
+
+    // 👇👇👇 2. วางลิงก์หน้าเมนูหลักตรงนี้ครับ 👇👇👇
+    const MAIN_MENU_URL = "https://add00917-hue.github.io/GNR3-Building-MS/"; 
+    // 👆👆👆 ------------------------------------------------ 👆👆👆
+
     const CONFIG = {
       buildings: [
         { 
@@ -277,8 +291,7 @@
       initTheme();
       const todayIso = toIsoDate(new Date());
       document.getElementById('selectedDate').value = todayIso;
-      
-      refreshAll();
+      refreshAll(true);
       startAutoRefresh();
     });
 
@@ -318,12 +331,9 @@
     }
 
     function returnToMainMenu() {
-      const pass = prompt("กรุณาใส่รหัสผ่านเพื่อกลับสู่เมนูหลัก:");
-      if (pass === "gnr3admin") {
-        window.location.href = "https://www.google.co.th"; 
-      } else if (pass !== null) {
-        alert("รหัสผ่านไม่ถูกต้อง!");
-      }
+      const pass = prompt("กรุณาใส่รหัสผ่านเพื่อกลับสู่เมนูหลัก (gnr3admin):");
+      if (pass === "gnr3admin") { window.location.href = MAIN_MENU_URL; } 
+      else if (pass !== null) { alert("รหัสผ่านไม่ถูกต้อง!"); }
     }
 
     function toggleSidebar() {
@@ -337,75 +347,58 @@
       }
     }
 
-    // ฟังก์ชันคำนวณระยะเวลา (เวลาปิด - เวลาเปิด)
     function calculateDuration(start, end) {
       if (!start || !end) return '';
-      let [sh, sm] = start.split(':').map(Number);
-      let [eh, em] = end.split(':').map(Number);
-
-      let startMin = sh * 60 + sm;
-      let endMin = eh * 60 + em;
-
-      // กรณีข้ามวัน (เช่น เปิด 22:00 ปิด 02:00)
+      let [sh, sm] = start.split(':').map(Number); let [eh, em] = end.split(':').map(Number);
+      let startMin = sh * 60 + sm; let endMin = eh * 60 + em;
       if (endMin < startMin) endMin += 24 * 60;
-
       let diffMin = endMin - startMin;
-      let h = Math.floor(diffMin / 60);
-      let m = diffMin % 60;
-
+      let h = Math.floor(diffMin / 60); let m = diffMin % 60;
       let result = '';
-      if (h > 0) result += `${h} ชม.`;
-      if (m > 0) result += ` ${m} นาที`;
+      if (h > 0) result += `${h} ชม.`; if (m > 0) result += ` ${m} นาที`;
       return result.trim() || '0 นาที';
     }
 
-    function refreshAll() {
+    function refreshAll(isManualTrigger = false) {
       const selectedStr = document.getElementById('selectedDate').value;
       if (!selectedStr) return;
+      if (isManualTrigger) openModal('loadingModal');
       
       const statusText = document.getElementById('statusText');
       statusText.innerText = "กำลังซิงค์...";
       
-      try {
-        google.script.run
-          .withSuccessHandler(function(data) {
-            SERVER_RECORDS = data || [];
+      fetch(`${API_URL}?action=getData&date=${selectedStr}`)
+        .then(response => response.json())
+        .then(result => {
+          if (result.status === 'success') {
+            SERVER_RECORDS = result.data || [];
             renderDashboard(selectedStr);
             statusText.innerText = "อัปเดตล่าสุด";
-          })
-          .withFailureHandler(function(err) {
-            statusText.innerText = "เกิดข้อผิดพลาด";
-          })
-          .getDashboardData(selectedStr);
-      } catch(e) {
-        setTimeout(() => { SERVER_RECORDS = []; renderDashboard(selectedStr); statusText.innerText = "ไม่ได้เชื่อมระบบ"; }, 800);
-      }
+          } else {
+            statusText.innerText = "ข้อผิดพลาด API";
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          statusText.innerText = "ไม่ได้เชื่อมระบบ";
+        })
+        .finally(() => {
+          if (isManualTrigger) { setTimeout(() => { closeModal('loadingModal'); }, 400); }
+        });
     }
 
     function startAutoRefresh() {
       clearInterval(autoRefreshTimer);
       autoRefreshTimer = setInterval(() => {
         const hasOpenModal = document.querySelector('.modal.show');
-        if (!hasOpenModal) refreshAll();
+        if (!hasOpenModal) refreshAll(false); 
       }, 10000); 
     }
 
     function loadBySelectedDate() {
       if (!document.getElementById('selectedDate').value) return alert('กรุณาเลือกวันที่');
       if (window.innerWidth <= 1080) toggleSidebar();
-      
-      document.getElementById('dashboardContainer').innerHTML = `
-        <div class="b-card">
-          <div class="skeleton-box" style="width: 300px; height: 40px; margin-bottom: 24px;"></div>
-          <div class="grid-4">
-            <div class="skeleton-box" style="height: 200px;"></div>
-            <div class="skeleton-box" style="height: 200px;"></div>
-            <div class="skeleton-box" style="height: 200px;"></div>
-            <div class="skeleton-box" style="height: 200px;"></div>
-          </div>
-        </div>
-      `;
-      refreshAll();
+      refreshAll(true);
     }
 
     function renderDashboard(startDateStr) {
@@ -414,9 +407,7 @@
       
       for(let i=0; i<4; i++) {
         let d = new Date(baseDate); d.setDate(d.getDate() + i);
-        let y = d.getFullYear();
-        let m = String(d.getMonth() + 1).padStart(2, '0');
-        let day = String(d.getDate()).padStart(2, '0');
+        let y = d.getFullYear(); let m = String(d.getMonth() + 1).padStart(2, '0'); let day = String(d.getDate()).padStart(2, '0');
         dateArray.push(`${day}-${m}-${y}`); 
       }
 
@@ -429,7 +420,6 @@
         dateArray.forEach((dStr, idx) => {
           let isToday = (idx === 0);
           let colClass = isToday ? 'day-col today-col' : 'day-col';
-          
           let displayDate = formatDisplayDateCE(dStr); 
           let label = isToday ? `<div class="day-title today">วันนี้<br>${displayDate}</div>` 
                     : idx === 1 ? `<div class="day-title" style="color:var(--text)">พรุ่งนี้<br>${displayDate}</div>` 
@@ -469,8 +459,7 @@
       document.getElementById('summarySubtitle').innerText = `ประจำวันที่ ${formatDisplayDateCE(dateStr)}`;
       
       const body = document.getElementById('summaryBody');
-      body.innerHTML = `<div class="skeleton-box" style="height: 100px; margin-bottom: 20px; border-radius: 16px;"></div><div class="skeleton-box" style="height: 100px; margin-bottom: 20px; border-radius: 16px;"></div>`;
-      
+      body.style.opacity = '0'; 
       openModal('summaryModal');
 
       setTimeout(() => {
@@ -482,13 +471,17 @@
           records.forEach(r => {
             const c = getDeptColor(r.department || 'ทั่วไป');
             const duration = calculateDuration(r.startTime, r.stopTime);
+            // โชว์ Cost Center ข้างๆ แผนกใน Popup
+            const ccTag = r.costCenter ? `<span class="cc-tag">CC: ${r.costCenter}</span>` : '';
+            
             html += `
               <div style="background: var(--surface); padding: 24px; border-radius: 20px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; justify-content: space-between; align-items: center; border-left: 6px solid var(--primary-2);">
                 <div>
                   <h4 style="margin: 0 0 12px; color: var(--text); font-size: 22px;">📍 ${r.floorZone}</h4>
-                  <p style="margin: 0; font-size: 16px; color: var(--muted); display:flex; align-items:center; gap:12px;">
+                  <p style="margin: 0; font-size: 16px; color: var(--muted); display:flex; align-items:center; gap:12px; flex-wrap: wrap;">
                     <span class="dept-tag" style="background:${c.bg}; color:${c.text};">${r.department || 'ไม่ระบุแผนก'}</span>
-                    <span>${r.remark ? '💬 ' + r.remark : ''}</span>
+                    ${ccTag}
+                    <span style="display:block; width: 100%; margin-top:4px;">${r.remark ? '💬 หมายเหตุ: ' + r.remark : ''}</span>
                   </p>
                 </div>
                 <div style="text-align: right;">
@@ -505,7 +498,8 @@
           html += '</div>';
           body.innerHTML = html;
         }
-      }, 400); 
+        body.style.opacity = '1'; 
+      }, 150); 
     }
 
     function openFormModalForAdd() {
@@ -517,7 +511,8 @@
 
     function addEntryRow(cloneLast) {
       const todayIso = document.getElementById('selectedDate').value || toIsoDate(new Date());
-      let row = { date: todayIso, building: CONFIG.buildings[0].name, floorZone: CONFIG.buildings[0].zones[0], department: '', startTime: '08:00', stopTime: '17:00', remark: '' };
+      // เพิ่ม costCenter ลงไปใน Object ด้วย
+      let row = { date: todayIso, building: CONFIG.buildings[0].name, floorZone: CONFIG.buildings[0].zones[0], department: '', costCenter: '', startTime: '08:00', stopTime: '17:00', remark: '' };
       if (cloneLast && entryRows.length) {
         row = JSON.parse(JSON.stringify(entryRows[entryRows.length - 1]));
         showToast("คัดลอกแถวเรียบร้อย");
@@ -574,6 +569,7 @@
                 <label>📍 โซน / ชั้น</label>
                 <select onchange="updateEntry(${index}, 'floorZone', this.value)">${zOpts}</select>
               </div>
+
               <div class="field col-3">
                 <label>เริ่มเปิด (ชม : นาที)</label>
                 ${buildTimePicker(index, 'startTime', row.startTime)}
@@ -587,8 +583,13 @@
                 <input type="text" value="${row.department}" placeholder="เช่น HR, IT" onchange="updateEntry(${index}, 'department', this.value)">
               </div>
               <div class="field col-3">
+                <label>💰 Cost Center</label>
+                <input type="text" value="${row.costCenter}" placeholder="เช่น 12345" onchange="updateEntry(${index}, 'costCenter', this.value)">
+              </div>
+
+              <div class="field col-12">
                 <label>💬 หมายเหตุ</label>
-                <input type="text" value="${row.remark}" placeholder="เช่น OT" onchange="updateEntry(${index}, 'remark', this.value)">
+                <input type="text" value="${row.remark}" placeholder="เช่น OT โปรเจกต์ประจำเดือน" onchange="updateEntry(${index}, 'remark', this.value)">
               </div>
             </div>
           </div>
@@ -620,27 +621,28 @@
         return { ...row, date: formattedDate };
       });
 
-      const btn = document.getElementById('saveBtn');
-      btn.innerText = 'กำลังบันทึก...';
-      btn.disabled = true;
+      closeModal('formModal');
+      openModal('loadingModal');
 
-      try {
-        google.script.run
-          .withSuccessHandler(function(res) {
-            showToast(res); closeModal('formModal');
-            document.getElementById('dashboardContainer').innerHTML = `<div class="empty-day" style="font-size: 20px;">กำลังอัปเดตกระดาน...</div>`;
-            refreshAll(); 
-            btn.innerText = '💾 บันทึกเข้าระบบ'; btn.disabled = false;
-          })
-          .withFailureHandler(function(err) {
-            alert('เกิดข้อผิดพลาดในการบันทึก: ' + err.message);
-            btn.innerText = '💾 บันทึกเข้าระบบ'; btn.disabled = false;
-          })
-          .saveRecords(payload); 
-      } catch(e) {
-        showToast('จำลองการบันทึกสำเร็จ'); closeModal('formModal');
-        btn.innerText = '💾 บันทึกเข้าระบบ'; btn.disabled = false;
-      }
+      fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: 'save', data: payload }) 
+      })
+      .then(response => response.json())
+      .then(result => {
+        if (result.status === 'success') {
+          showToast(result.message || "บันทึกสำเร็จ"); 
+          refreshAll(true); 
+        } else {
+          closeModal('loadingModal');
+          alert('เกิดข้อผิดพลาด: ' + result.message);
+        }
+      })
+      .catch(err => {
+        closeModal('loadingModal');
+        alert('เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ (API Error)');
+        console.error(err);
+      });
     }
 
     function openModal(id) { document.getElementById(id).classList.add('show'); }
@@ -648,10 +650,7 @@
     function handleOverlayClose(e, id) { if (e.target.id === id) closeModal(id); }
     
     function toIsoDate(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
-    function formatDisplayDateCE(dateStr) { 
-      if(!dateStr) return '-'; 
-      return dateStr.replace(/-/g, '/'); 
-    }
+    function formatDisplayDateCE(dateStr) { if(!dateStr) return '-'; return dateStr.replace(/-/g, '/'); }
   </script>
 </body>
 </html>
