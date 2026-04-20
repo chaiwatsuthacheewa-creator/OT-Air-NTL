@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>แผนเปิดเครื่องปรับอากาศนอกเวลาทำการ NTL</title>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg-color: #f1f5f9;
+      --surface: #ffffff;
+      --surface-2: #f8fafc;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+
+      --primary: #0ea5e9;
+      --primary-2: #3b82f6;
+      --primary-soft: #e0f2fe;
+
+      --danger: #f43f5e;
+      --danger-soft: #ffe4e6;
+      --success: #10b981;
+      --success-soft: #ecfdf5;
+
+      --shadow-sm: 0 4px 10px rgba(14, 165, 233, 0.05);
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      
+      --radius: 16px;
+      --radius-sm: 10px;
+      --backdrop: rgba(15, 23, 42, 0.65);
+      --sidebar-width: 280px;
+
+      --tag-1: #eef2ff; --tag-1-text: #4f46e5;
+      --tag-2: #fdf4ff; --tag-2-text: #c026d3;
+      --tag-3: #fff7ed; --tag-3-text: #ea580c;
+      --tag-4: #f0fdf4; --tag-4-text: #16a34a;
+    }
+
+    body.dark{
+      --bg-color: #0f172a;
+      --surface: #1e293b;
+      --surface-2: #0b1120;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --border: #334155;
+      --primary: #38bdf8;
+      --primary-2: #60a5fa;
+      --primary-soft: #0c4a6e;
+      --danger: #fb7185;
+      --danger-soft: #4c0519;
+      --shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+
+    *{box-sizing:border-box}
+    html,body{ margin:0; padding:0; height: 100%; overflow: hidden;}
+    body{ font-family: 'Prompt', sans-serif; font-size: 18px; background: var(--bg-color); color: var(--text); transition: background 0.3s ease, color 0.3s ease; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+    /* Layout */
+    .layout { display: flex; height: 100vh; width: 100vw; overflow: hidden; }
+    .sidebar { width: var(--sidebar-width); flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; transition: margin-left 0.3s ease; z-index: 1000; position: relative; box-shadow: var(--shadow-sm);}
+    .sidebar-header { padding: 24px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px dashed var(--primary-soft); background: linear-gradient(135deg, rgba(14,165,233,0.05), transparent); }
+    .sidebar-header h2 { margin: 0; font-size: 22px; color: var(--primary-2); font-weight: 700; display: flex; align-items: center; gap: 8px;}
+    .sidebar-menu { padding: 24px 20px; display: flex; flex-direction: column; gap: 20px; flex: 1; overflow-y: auto; }
+    .sidebar-footer { padding: 20px; border-top: 1px solid var(--border); background: var(--surface-2);}
+    .sidebar.hidden { margin-left: calc(-1 * var(--sidebar-width)); }
+    .sidebar-overlay { position: fixed; inset: 0; background: var(--backdrop); backdrop-filter: blur(4px); z-index: 999; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+    .sidebar-overlay.show { opacity: 1; visibility: visible; }
+
+    .main-content { flex: 1; min-width: 0; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; background: var(--bg-color);}
+    .top-nav { display: flex; align-items: center; justify-content: space-between; padding: 20px 28px; background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow-sm);}
+    .container { max-width: 1600px; margin: 0 auto; padding: 28px; display: grid; gap: 32px; width: 100%; }
+
+    /* Toast & Indicators */
+    .toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: linear-gradient(135deg, var(--primary), var(--primary-2)); color: white; padding: 16px 32px; border-radius: 999px; font-weight: 600; font-size: 18px; box-shadow: 0 10px 25px rgba(14,165,233,0.4); z-index: 10000; transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);}
+    .toast-container.show { transform: translateX(-50%) translateY(0); }
+    .update-indicator { font-size: 16px; color: var(--primary-2); display: flex; align-items: center; gap: 8px; font-weight: 600; background: var(--primary-soft); padding: 8px 16px; border-radius: 999px; border: 1px solid rgba(14,165,233,0.2);}
+    .dot { width: 12px; height: 12px; background: var(--primary-2); border-radius: 50%; }
+
+    /* Dashboard */
+    .b-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow); border-top: 5px solid var(--primary-2);}
+    .b-header { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+    .b-header h2 { margin: 0; font-size: 28px; color: var(--text); font-weight: 700; display: flex; align-items: center; gap: 10px;}
+    .b-header h2 span { color: var(--primary-2); }
+    
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+    .day-col { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 24px 20px; display: flex; flex-direction: column; gap: 14px; cursor: pointer; transition: all 0.2s ease; position: relative;}
+    .day-col:hover { background: var(--surface); border-color: var(--primary); transform: translateY(-4px); box-shadow: 0 8px 20px rgba(14,165,233,0.15); }
+    .day-col.today-col { background: linear-gradient(180deg, var(--primary-soft) 0%, var(--surface-2) 100%); border-color: var(--primary); border-width: 2px;}
+    
+    .day-title { font-weight: 700; font-size: 18px; text-align: center; color: var(--muted); padding-bottom: 14px; border-bottom: 1px dashed var(--border); margin-bottom: 8px;}
+    .day-col.today-col .day-title { color: var(--primary-2); border-bottom-color: var(--primary);}
+
+    .ticket { background: var(--surface); border: 1px solid var(--border); border-left: 5px solid var(--primary); border-radius: 10px; padding: 16px; font-size: 16px; margin-bottom: 8px;}
+    .ticket b { color: var(--text); font-size: 18px; display: block; margin-bottom: 8px;}
+    .ticket .meta { color: var(--primary-2); font-size: 15px; font-weight: 600; background: var(--primary-soft); display: inline-block; padding: 6px 10px; border-radius: 6px;}
+    .ticket .duration { font-size: 13px; color: var(--muted); font-weight: 500; display: block; margin-top: 6px; }
+
+    .empty-day { text-align: center; color: var(--muted); font-size: 18px; padding: 40px 0; font-weight: 500; opacity: 0.8;}
+    .skeleton-box { background: linear-gradient(90deg, var(--border) 25%, var(--surface-2) 50%, var(--border) 75%); background-size: 200% 100%; animation: skeletonLoading 1.5s infinite; border-radius: 8px; }
+    @keyframes skeletonLoading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    /* Inputs & Buttons */
+    input, select, button { font-family: 'Prompt', sans-serif; font-size: 18px; font-weight: 500;}
+    input[type="text"], input[type="date"], select { width: 100%; padding: 16px 20px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-color); color: var(--text); outline: none; transition: all 0.2s ease;}
+    input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-soft); background: var(--surface); }
+    
+    button { border: none; cursor: pointer; padding: 16px 24px; border-radius: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s ease; }
+    button:active { transform: scale(0.96); }
+    .btn-primary { background: linear-gradient(135deg, var(--primary-2), var(--primary)); color: #fff; }
+    .btn-secondary { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); }
+    .btn-danger { background: var(--danger-soft); color: var(--danger); border: 1px solid var(--danger-soft); }
+    .btn-success { background: var(--success-soft); color: var(--success); border: 1px solid var(--success-soft); }
+
+    .theme-toggle { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 999px; padding: 10px 20px; display: inline-flex; align-items: center; gap: 8px; font-weight: 600;}
+    
+    .custom-time-wrapper { display: flex; align-items: center; gap: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 8px 16px; }
+    .custom-time-wrapper:focus-within { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-soft); }
+    .time-sel { flex: 1; appearance: none; -webkit-appearance: none; background: transparent; border: none; font-size: 20px; font-weight: 700; color: var(--text); text-align: center; padding: 8px; cursor: pointer; outline: none;}
+    .time-sep { font-weight: 700; color: var(--muted); font-size: 20px;}
+
+    /* Modals */
+    .modal { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: var(--backdrop); z-index: 9999; padding: 20px; opacity: 0; transition: opacity 0.2s ease;}
+    .modal.show { display: flex; opacity: 1; }
+    .modal-card { width: min(1300px, 95%); max-height: 90vh; background: var(--surface-2); border: 1px solid var(--border); border-radius: 24px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.3); transform: scale(0.95); transition: transform 0.2s ease;}
+    .modal.show .modal-card { transform: scale(1); }
+    
+    .modal-head { background: var(--surface); border-bottom: 1px solid var(--border); padding: 24px 32px; display: flex; justify-content: space-between; align-items: center; }
+    .modal-title-wrap h3 { margin: 0; font-size: 26px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 12px;}
+    .modal-title-wrap h3 span { color: var(--primary-2); }
+    .modal-body { padding: 32px; flex: 1; overflow-y: auto; }
+
+    .dept-tag { padding: 6px 14px; border-radius: 8px; font-size: 15px; font-weight: 600; display: inline-block; }
+
+    /* Form */
+    .entry-list { display: flex; flex-direction: column; gap: 28px; }
+    .entry-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px; border-left: 5px solid var(--primary-2);}
+    .entry-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px dashed var(--border); }
+    .entry-head strong { font-size: 22px; color: var(--text); }
+    .entry-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; }
+    .field { display: flex; flex-direction: column; gap: 10px; }
+    .field label { font-size: 16px; font-weight: 600; color: var(--muted); }
+    .col-3 { grid-column: span 3; } .col-4 { grid-column: span 4; } .col-6 { grid-column: span 6; }
+
+    .sticky-actions { position: sticky; bottom: 0; background: linear-gradient(180deg, transparent, var(--surface-2) 20%); padding-top: 24px; }
+    .modal-actions { display: flex; flex-wrap: wrap; gap: 16px; justify-content: flex-end; background: var(--surface); padding: 24px; border-radius: var(--radius-sm); border: 1px solid var(--border);}
+
+    @media (max-width: 1080px){
+      .sidebar { position: fixed; height: 100vh; left: calc(-1 * var(--sidebar-width)); top: 0; margin-left: 0;}
+      .sidebar.show { left: 0; }
+      .grid-4 { grid-template-columns: 1fr; }
+      .col-3, .col-4 { grid-column: span 6; }
+    }
+    @media (max-width: 600px){
+      .col-3, .col-4, .col-6 { grid-column: span 12; }
+      .modal-actions button{ width: 100%; }
+      .container { padding: 16px; }
+      .top-nav { flex-direction: column; align-items: flex-start; gap: 16px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+  <div class="toast-container" id="toastMsg"><span id="toastText">สำเร็จ!</span></div>
+
+  <div class="layout">
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2>⚙️ แผงควบคุม</h2>
+        <button class="btn-secondary" style="padding: 10px; border:none; background: transparent;" onclick="toggleSidebar()">✕</button>
+      </div>
+      <div class="sidebar-menu">
+        <button class="btn-primary" type="button" onclick="openFormModalForAdd()">+ เพิ่มคิวเปิดแอร์ใหม่</button>
+        <hr style="width:100%; border:0; border-top:1px dashed var(--border); margin: 8px 0;">
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <label style="font-size: 16px; font-weight: 600; color: var(--muted);">เลือกวันที่เริ่มต้น</label>
+          <input type="date" id="selectedDate">
+          <button class="btn-secondary" type="button" onclick="loadBySelectedDate()">รีเฟรชข้อมูล</button>
+        </div>
+      </div>
+      <div class="sidebar-footer">
+        <button class="btn-danger" style="width: 100%;" type="button" onclick="returnToMainMenu()">กลับสู่เมนูหลัก</button>
+      </div>
+    </nav>
+
+    <main class="main-content">
+      <header class="top-nav">
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <button class="btn-secondary" style="padding: 12px; border: none; background: var(--surface-2);" onclick="toggleSidebar()">☰</button>
+          <h2 style="margin: 0; font-size: 26px; font-weight: 700; color: var(--text);">แผนเปิดเครื่องปรับอากาศนอกเวลาทำการ <span style="color:var(--primary-2)">NTL</span></h2>
+        </div>
+        <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+          <button class="theme-toggle" onclick="toggleTheme()" type="button">
+            <span id="themeIconWrap">☀️</span>
+            <span id="themeTextWrap">โหมดกลางวัน</span>
+          </button>
+          <div class="update-indicator" id="loadingStatus"><span class="dot" id="liveDot"></span> <span id="statusText">เชื่อมต่อระบบ</span></div>
+        </div>
+      </header>
+
+      <div class="container" id="dashboardContainer">
+        <div class="b-card">
+          <div class="skeleton-box" style="width: 300px; height: 40px; margin-bottom: 24px;"></div>
+          <div class="grid-4">
+            <div class="skeleton-box" style="height: 200px;"></div>
+            <div class="skeleton-box" style="height: 200px;"></div>
+            <div class="skeleton-box" style="height: 200px;"></div>
+            <div class="skeleton-box" style="height: 200px;"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal" id="formModal" onclick="handleOverlayClose(event, 'formModal')">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div class="modal-title-wrap"><h3><span>📝</span> บันทึกคิวเปิดแอร์ NTL</h3></div>
+        <button class="btn-secondary" style="padding: 10px; border:none; background: var(--surface-2);" onclick="closeModal('formModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="entry-list" id="entryList"></div>
+        <div class="sticky-actions">
+          <div class="modal-actions">
+            <button class="btn-success" type="button" onclick="addEntryRow(true)">✨ คัดลอกแถวบน</button>
+            <button class="btn-secondary" type="button" onclick="addEntryRow(false)">+ เพิ่มแถวใหม่</button>
+            <button class="btn-primary" id="saveBtn" type="button" onclick="saveEntries()">💾 บันทึกเข้าระบบ</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="summaryModal" onclick="handleOverlayClose(event, 'summaryModal')">
+    <div class="modal-card" style="width: min(850px, 95%);">
+      <div class="modal-head">
+        <div class="modal-title-wrap">
+          <h3 id="summaryTitle">ข้อมูลรวม</h3>
+          <p id="summarySubtitle" style="color:var(--muted); font-size: 18px; margin-top: 8px;"></p>
+        </div>
+        <button class="btn-secondary" style="padding: 10px; border:none; background: var(--surface-2);" onclick="closeModal('summaryModal')">✕</button>
+      </div>
+      <div class="modal-body" id="summaryBody"></div>
+    </div>
+  </div>
+
+  <script>
+    const CONFIG = {
+      buildings: [
+        { 
+          name: "Ari Hills (สำนักงานใหญ่)", 
+          zones: [
+            "9 Zone 1", "9 Zone 2", "9 Zone 3", "9 Zone 4",
+            "10 Zone 1", "10 Zone 2", "10 Zone 3", "10 Zone 4",
+            "11 Zone 1", "11 Zone 2", "11 Zone 3", "11 Zone 4",
+            "12 Zone 1", "12 Zone 2", "12 Zone 3", "12 Zone 4",
+            "12A Zone 1", "12A Zone 2", "12A Zone 3", "12A Zone 4",
+            "14 Zone 1", "14 Zone 2", "14 Zone 3", "14 Zone 4",
+            "15 Zone 1", "15 Zone 2", "15 Zone 3", "15 Zone 4",
+            "16 Zone 1", "16 Zone 2", "16 Zone 3", "16 Zone 4"
+          ] 
+        },
+        { name: "ESV Tower", zones: ["14 Zone 1", "14 Zone 2"] },
+        { name: "KSL Tower", zones: ["11 Zone 1", "11 Zone 2", "12 Zone 1", "12 Zone 2", "14 Zone 1", "14 Zone 2", "15 Zone 1", "15 Zone 2"] }
+      ]
+    };
+
+    let entryRows = [];
+    let SERVER_RECORDS = []; 
+    let autoRefreshTimer;
+
+    document.addEventListener('DOMContentLoaded', function () {
+      initTheme();
+      const todayIso = toIsoDate(new Date());
+      document.getElementById('selectedDate').value = todayIso;
+      
+      refreshAll();
+      startAutoRefresh();
+    });
+
+    function toggleTheme() {
+      document.body.classList.toggle('dark');
+      const isDark = document.body.classList.contains('dark');
+      localStorage.setItem('aircon-theme', isDark ? 'dark' : 'light');
+      updateThemeUI(isDark);
+    }
+
+    function initTheme() {
+      if (localStorage.getItem('aircon-theme') === 'dark') {
+        document.body.classList.add('dark');
+        updateThemeUI(true);
+      } else {
+        updateThemeUI(false);
+      }
+    }
+
+    function updateThemeUI(isDark) {
+      document.getElementById('themeIconWrap').innerHTML = isDark ? '🌙' : '☀️';
+      document.getElementById('themeTextWrap').innerHTML = isDark ? 'โหมดกลางคืน' : 'โหมดกลางวัน';
+    }
+
+    function getDeptColor(deptName) {
+      if(!deptName) return { bg: 'var(--surface-2)', text: 'var(--muted)' };
+      const colors = [{ bg: 'var(--tag-1)', text: 'var(--tag-1-text)' }, { bg: 'var(--tag-2)', text: 'var(--tag-2-text)' }, { bg: 'var(--tag-3)', text: 'var(--tag-3-text)' }, { bg: 'var(--tag-4)', text: 'var(--tag-4-text)' }];
+      let sum = 0; for(let i=0; i<deptName.length; i++) sum += deptName.charCodeAt(i);
+      return colors[sum % colors.length];
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toastMsg');
+      document.getElementById('toastText').innerText = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    function returnToMainMenu() {
+      const pass = prompt("กรุณาใส่รหัสผ่านเพื่อกลับสู่เมนูหลัก:");
+      if (pass === "gnr3admin") {
+        window.location.href = "https://www.google.co.th"; 
+      } else if (pass !== null) {
+        alert("รหัสผ่านไม่ถูกต้อง!");
+      }
+    }
+
+    function toggleSidebar() {
+      const sb = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      if (window.innerWidth <= 1080) {
+        sb.classList.toggle('show');
+        if (sb.classList.contains('show')) overlay.classList.add('show'); else overlay.classList.remove('show');
+      } else {
+        sb.classList.toggle('hidden');
+      }
+    }
+
+    // ฟังก์ชันคำนวณระยะเวลา (เวลาปิด - เวลาเปิด)
+    function calculateDuration(start, end) {
+      if (!start || !end) return '';
+      let [sh, sm] = start.split(':').map(Number);
+      let [eh, em] = end.split(':').map(Number);
+
+      let startMin = sh * 60 + sm;
+      let endMin = eh * 60 + em;
+
+      // กรณีข้ามวัน (เช่น เปิด 22:00 ปิด 02:00)
+      if (endMin < startMin) endMin += 24 * 60;
+
+      let diffMin = endMin - startMin;
+      let h = Math.floor(diffMin / 60);
+      let m = diffMin % 60;
+
+      let result = '';
+      if (h > 0) result += `${h} ชม.`;
+      if (m > 0) result += ` ${m} นาที`;
+      return result.trim() || '0 นาที';
+    }
+
+    function refreshAll() {
+      const selectedStr = document.getElementById('selectedDate').value;
+      if (!selectedStr) return;
+      
+      const statusText = document.getElementById('statusText');
+      statusText.innerText = "กำลังซิงค์...";
+      
+      try {
+        google.script.run
+          .withSuccessHandler(function(data) {
+            SERVER_RECORDS = data || [];
+            renderDashboard(selectedStr);
+            statusText.innerText = "อัปเดตล่าสุด";
+          })
+          .withFailureHandler(function(err) {
+            statusText.innerText = "เกิดข้อผิดพลาด";
+          })
+          .getDashboardData(selectedStr);
+      } catch(e) {
+        setTimeout(() => { SERVER_RECORDS = []; renderDashboard(selectedStr); statusText.innerText = "ไม่ได้เชื่อมระบบ"; }, 800);
+      }
+    }
+
+    function startAutoRefresh() {
+      clearInterval(autoRefreshTimer);
+      autoRefreshTimer = setInterval(() => {
+        const hasOpenModal = document.querySelector('.modal.show');
+        if (!hasOpenModal) refreshAll();
+      }, 10000); 
+    }
+
+    function loadBySelectedDate() {
+      if (!document.getElementById('selectedDate').value) return alert('กรุณาเลือกวันที่');
+      if (window.innerWidth <= 1080) toggleSidebar();
+      
+      document.getElementById('dashboardContainer').innerHTML = `
+        <div class="b-card">
+          <div class="skeleton-box" style="width: 300px; height: 40px; margin-bottom: 24px;"></div>
+          <div class="grid-4">
+            <div class="skeleton-box" style="height: 200px;"></div>
+            <div class="skeleton-box" style="height: 200px;"></div>
+            <div class="skeleton-box" style="height: 200px;"></div>
+            <div class="skeleton-box" style="height: 200px;"></div>
+          </div>
+        </div>
+      `;
+      refreshAll();
+    }
+
+    function renderDashboard(startDateStr) {
+      const baseDate = new Date(startDateStr);
+      const dateArray = [];
+      
+      for(let i=0; i<4; i++) {
+        let d = new Date(baseDate); d.setDate(d.getDate() + i);
+        let y = d.getFullYear();
+        let m = String(d.getMonth() + 1).padStart(2, '0');
+        let day = String(d.getDate()).padStart(2, '0');
+        dateArray.push(`${day}-${m}-${y}`); 
+      }
+
+      const container = document.getElementById('dashboardContainer');
+      let newHtml = '';
+
+      CONFIG.buildings.forEach(b => {
+        newHtml += `<div class="b-card"><div class="b-header"><h2><span>🏢</span> ${b.name}</h2></div><div class="grid-4">`;
+
+        dateArray.forEach((dStr, idx) => {
+          let isToday = (idx === 0);
+          let colClass = isToday ? 'day-col today-col' : 'day-col';
+          
+          let displayDate = formatDisplayDateCE(dStr); 
+          let label = isToday ? `<div class="day-title today">วันนี้<br>${displayDate}</div>` 
+                    : idx === 1 ? `<div class="day-title" style="color:var(--text)">พรุ่งนี้<br>${displayDate}</div>` 
+                    : `<div class="day-title">${displayDate}</div>`;
+
+          const dayRecords = SERVER_RECORDS.filter(r => r.building === b.name && r.dateKey === dStr);
+          
+          newHtml += `<div class="${colClass}" onclick="openSummaryModal('${b.name}', '${dStr}')">${label}`;
+          
+          if (dayRecords.length === 0) {
+            newHtml += `<div class="empty-day">- ว่าง -</div>`;
+          } else {
+            dayRecords.slice(0, 2).forEach(r => {
+              let duration = calculateDuration(r.startTime, r.stopTime);
+              newHtml += `
+                <div class="ticket">
+                  <b>📍 ${r.floorZone}</b>
+                  <span class="meta">⏱️ ${r.startTime} - ${r.stopTime}</span>
+                  <span class="duration">(รวมเวลา ${duration})</span>
+                </div>
+              `;
+            });
+            if(dayRecords.length > 2) {
+              newHtml += `<div style="text-align:center; font-size:16px; color:var(--primary-2); font-weight:700; background: var(--primary-soft); padding:8px; border-radius:8px; margin-top:8px;">+ เพิ่มเติม ${dayRecords.length - 2} รายการ</div>`;
+            }
+          }
+          newHtml += `</div>`; 
+        });
+        newHtml += `</div></div>`;
+      });
+
+      if (container.innerHTML !== newHtml) container.innerHTML = newHtml;
+    }
+
+    function openSummaryModal(building, dateStr) {
+      document.getElementById('summaryTitle').innerHTML = `<span>🏢</span> ${building}`;
+      document.getElementById('summarySubtitle').innerText = `ประจำวันที่ ${formatDisplayDateCE(dateStr)}`;
+      
+      const body = document.getElementById('summaryBody');
+      body.innerHTML = `<div class="skeleton-box" style="height: 100px; margin-bottom: 20px; border-radius: 16px;"></div><div class="skeleton-box" style="height: 100px; margin-bottom: 20px; border-radius: 16px;"></div>`;
+      
+      openModal('summaryModal');
+
+      setTimeout(() => {
+        const records = SERVER_RECORDS.filter(r => r.building === building && r.dateKey === dateStr);
+        if(records.length === 0) {
+          body.innerHTML = `<div class="empty-day" style="font-size:20px;">- ไม่มีคิวเปิดแอร์ในโซนนี้ -</div>`;
+        } else {
+          let html = '<div style="display:flex; flex-direction:column; gap:20px;">';
+          records.forEach(r => {
+            const c = getDeptColor(r.department || 'ทั่วไป');
+            const duration = calculateDuration(r.startTime, r.stopTime);
+            html += `
+              <div style="background: var(--surface); padding: 24px; border-radius: 20px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; justify-content: space-between; align-items: center; border-left: 6px solid var(--primary-2);">
+                <div>
+                  <h4 style="margin: 0 0 12px; color: var(--text); font-size: 22px;">📍 ${r.floorZone}</h4>
+                  <p style="margin: 0; font-size: 16px; color: var(--muted); display:flex; align-items:center; gap:12px;">
+                    <span class="dept-tag" style="background:${c.bg}; color:${c.text};">${r.department || 'ไม่ระบุแผนก'}</span>
+                    <span>${r.remark ? '💬 ' + r.remark : ''}</span>
+                  </p>
+                </div>
+                <div style="text-align: right;">
+                  <div style="font-weight: 700; font-size: 20px; color: var(--primary-2); background: var(--primary-soft); padding: 10px 16px; border-radius: 12px; border: 1px solid rgba(14,165,233,0.1); display: inline-block;">
+                    ⏱️ ${r.startTime} - ${r.stopTime}
+                  </div>
+                  <div style="font-size: 15px; font-weight: 600; color: var(--muted); margin-top: 8px;">
+                    รวม: <span style="color: var(--primary-2);">${duration}</span>
+                  </div>
+                </div>
+              </div>
+            `;
+          });
+          html += '</div>';
+          body.innerHTML = html;
+        }
+      }, 400); 
+    }
+
+    function openFormModalForAdd() {
+      entryRows = [];
+      addEntryRow(false);
+      openModal('formModal');
+      if (window.innerWidth <= 1080) toggleSidebar(); 
+    }
+
+    function addEntryRow(cloneLast) {
+      const todayIso = document.getElementById('selectedDate').value || toIsoDate(new Date());
+      let row = { date: todayIso, building: CONFIG.buildings[0].name, floorZone: CONFIG.buildings[0].zones[0], department: '', startTime: '08:00', stopTime: '17:00', remark: '' };
+      if (cloneLast && entryRows.length) {
+        row = JSON.parse(JSON.stringify(entryRows[entryRows.length - 1]));
+        showToast("คัดลอกแถวเรียบร้อย");
+      }
+      entryRows.push(row);
+      renderEntryRows();
+    }
+
+    function removeEntryRow(i) {
+      if (entryRows.length <= 1) return alert('ต้องมีอย่างน้อย 1 แถว');
+      entryRows.splice(i, 1);
+      renderEntryRows();
+    }
+
+    function buildTimePicker(index, field, value) {
+      let parts = (value || '08:00').split(':');
+      let hHtml = `<select class="time-sel" onchange="updateTime(${index}, '${field}', 'h', this.value)">`;
+      for(let i=0; i<24; i++) { let p = String(i).padStart(2,'0'); hHtml += `<option value="${p}" ${p===parts[0]?'selected':''}>${p}</option>`; }
+      hHtml += `</select>`;
+      let mHtml = `<select class="time-sel" onchange="updateTime(${index}, '${field}', 'm', this.value)">`;
+      for(let i=0; i<60; i+=5) { let p = String(i).padStart(2,'0'); mHtml += `<option value="${p}" ${p===parts[1]?'selected':''}>${p}</option>`; }
+      mHtml += `</select>`;
+      return `<div class="custom-time-wrapper">${hHtml} <span class="time-sep">:</span> ${mHtml}</div>`;
+    }
+
+    function updateTime(i, field, type, val) {
+      let parts = (entryRows[i][field] || '08:00').split(':');
+      if(type === 'h') parts[0] = val; if(type === 'm') parts[1] = val;
+      entryRows[i][field] = parts.join(':');
+    }
+
+    function renderEntryRows() {
+      document.getElementById('entryList').innerHTML = entryRows.map((row, index) => {
+        const bOpts = CONFIG.buildings.map(b => `<option value="${b.name}" ${b.name === row.building ? 'selected' : ''}>${b.name}</option>`).join('');
+        const zones = CONFIG.buildings.find(b => b.name === row.building)?.zones || [];
+        const zOpts = zones.map(z => `<option value="${z}" ${z === row.floorZone ? 'selected' : ''}>${z}</option>`).join('');
+
+        return `
+          <div class="entry-card">
+            <div class="entry-head">
+              <strong style="color:var(--text);">📌 รายการที่ ${index + 1}</strong>
+              <button class="btn-danger" onclick="removeEntryRow(${index})">ลบ</button>
+            </div>
+            <div class="entry-grid">
+              <div class="field col-4">
+                <label>📅 วันที่</label>
+                <input type="date" value="${row.date}" onchange="updateEntry(${index}, 'date', this.value)">
+              </div>
+              <div class="field col-4">
+                <label>🏢 อาคาร</label>
+                <select onchange="changeBuilding(${index}, this.value)">${bOpts}</select>
+              </div>
+              <div class="field col-4">
+                <label>📍 โซน / ชั้น</label>
+                <select onchange="updateEntry(${index}, 'floorZone', this.value)">${zOpts}</select>
+              </div>
+              <div class="field col-3">
+                <label>เริ่มเปิด (ชม : นาที)</label>
+                ${buildTimePicker(index, 'startTime', row.startTime)}
+              </div>
+              <div class="field col-3">
+                <label>เวลาปิด (ชม : นาที)</label>
+                ${buildTimePicker(index, 'stopTime', row.stopTime)}
+              </div>
+              <div class="field col-3">
+                <label>👥 แผนก (Dept)</label>
+                <input type="text" value="${row.department}" placeholder="เช่น HR, IT" onchange="updateEntry(${index}, 'department', this.value)">
+              </div>
+              <div class="field col-3">
+                <label>💬 หมายเหตุ</label>
+                <input type="text" value="${row.remark}" placeholder="เช่น OT" onchange="updateEntry(${index}, 'remark', this.value)">
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateEntry(i, f, v) { entryRows[i][f] = v; }
+    function changeBuilding(i, b) { entryRows[i].building = b; entryRows[i].floorZone = CONFIG.buildings.find(x => x.name === b).zones[0]; renderEntryRows(); }
+
+    function saveEntries() {
+      for (let i = 0; i < entryRows.length; i++) {
+        for (let j = i + 1; j < entryRows.length; j++) {
+          let r1 = entryRows[i], r2 = entryRows[j];
+          if (r1.date === r2.date && r1.building === r2.building && r1.floorZone === r2.floorZone) {
+            let s1 = parseInt(r1.startTime.split(':')[0])*60 + parseInt(r1.startTime.split(':')[1]);
+            let s2 = parseInt(r2.startTime.split(':')[0])*60 + parseInt(r2.startTime.split(':')[1]);
+            if (Math.abs(s1 - s2) <= 10) return alert(`แจ้งเตือน: พบการเปิดแอร์ซ้ำซ้อนกันภายใน 10 นาที ที่โซน ${r1.floorZone} (แถว ${i+1} และ ${j+1}) กรุณาแก้ไขครับ`);
+          }
+        }
+      }
+
+      const payload = entryRows.map(row => {
+        let formattedDate = row.date;
+        if(row.date && row.date.includes('-')) {
+          let p = row.date.split('-');
+          if(p[0].length === 4) formattedDate = `${p[2]}-${p[1]}-${p[0]}`; 
+        }
+        return { ...row, date: formattedDate };
+      });
+
+      const btn = document.getElementById('saveBtn');
+      btn.innerText = 'กำลังบันทึก...';
+      btn.disabled = true;
+
+      try {
+        google.script.run
+          .withSuccessHandler(function(res) {
+            showToast(res); closeModal('formModal');
+            document.getElementById('dashboardContainer').innerHTML = `<div class="empty-day" style="font-size: 20px;">กำลังอัปเดตกระดาน...</div>`;
+            refreshAll(); 
+            btn.innerText = '💾 บันทึกเข้าระบบ'; btn.disabled = false;
+          })
+          .withFailureHandler(function(err) {
+            alert('เกิดข้อผิดพลาดในการบันทึก: ' + err.message);
+            btn.innerText = '💾 บันทึกเข้าระบบ'; btn.disabled = false;
+          })
+          .saveRecords(payload); 
+      } catch(e) {
+        showToast('จำลองการบันทึกสำเร็จ'); closeModal('formModal');
+        btn.innerText = '💾 บันทึกเข้าระบบ'; btn.disabled = false;
+      }
+    }
+
+    function openModal(id) { document.getElementById(id).classList.add('show'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+    function handleOverlayClose(e, id) { if (e.target.id === id) closeModal(id); }
+    
+    function toIsoDate(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+    function formatDisplayDateCE(dateStr) { 
+      if(!dateStr) return '-'; 
+      return dateStr.replace(/-/g, '/'); 
+    }
+  </script>
+</body>
+</html>
