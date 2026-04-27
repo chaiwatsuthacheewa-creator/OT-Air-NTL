@@ -65,8 +65,9 @@
     *{box-sizing:border-box}
     html,body{ margin:0; padding:0; height: 100%; overflow: hidden;}
     body{ font-family: 'Prompt', sans-serif; font-size: 15px; background: var(--bg-color); color: var(--text); transition: background 0.3s ease, color 0.3s ease; }
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 10px; opacity: 0.5;}
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px;}
+    ::-webkit-scrollbar-track { background: transparent; }
 
     /* Layout */
     .layout { display: flex; height: 100vh; width: 100vw; overflow: hidden; }
@@ -152,16 +153,23 @@
     /* Modals & Forms */
     .modal { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: var(--backdrop); backdrop-filter: blur(4px); z-index: 9999; padding: 20px; opacity: 0; visibility: hidden; pointer-events: none; transition: all 0.3s; }
     .modal.show { opacity: 1; visibility: visible; pointer-events: auto; }
+    
+    /* Scrollbar สำหรับ PopUp */
     .modal-card { width: min(1200px, 95%); max-height: 90vh; background: var(--bg-color); border: 1px solid var(--border); border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.3); transform: scale(0.95); transition: transform 0.3s; }
     .modal.show .modal-card { transform: scale(1); }
-    .modal-head { background: var(--surface); border-bottom: 1px solid var(--border); padding: 20px 28px; display: flex; justify-content: space-between; align-items: center; }
+    .modal-head { background: var(--surface); border-bottom: 1px solid var(--border); padding: 20px 28px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
     .modal-body { padding: 28px; flex: 1; overflow-y: auto; }
+
+    /* Export Modal Specific */
+    .chk-container { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px 12px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; transition: all 0.2s; font-size: 14px; font-weight: 500;}
+    .chk-container:hover { border-color: var(--primary-2); }
+    .chk-container input { width: auto; cursor: pointer; }
 
     .pro-spinner { width: 50px; height: 50px; border: 5px solid var(--primary-soft); border-top-color: var(--primary-2); border-radius: 50%; animation: proSpin 1s linear infinite; margin: 0 auto 16px auto; }
     @keyframes proSpin { 100% { transform: rotate(360deg); } }
 
     .data-table { width: 100%; border-collapse: collapse; font-size: 14px;}
-    .data-table th { background: var(--surface); color: var(--muted); padding: 12px 16px; text-align: left; border-bottom: 2px solid var(--border); position: sticky; top: 0;}
+    .data-table th { background: var(--surface); color: var(--muted); padding: 12px 16px; text-align: left; border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 2;}
     .data-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: middle;}
     
     .empty-msg { text-align: center; color: var(--muted); font-size: 15px; padding: 30px; background: var(--surface-2); border-radius: 10px; border: 1px dashed var(--border); margin-top: 10px;}
@@ -246,9 +254,9 @@
                 <select id="reportMonth" style="width: auto; min-width: 250px; font-weight: 600;" onchange="calculateAndRenderDashboard()">
                   <option value="none">- กำลังโหลดข้อมูล -</option>
                 </select>
-                <button class="btn-success" onclick="exportToExcel()">
+                <button class="btn-success" onclick="openExportModal()">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                  Export
+                  Export Data
                 </button>
              </div>
           </div>
@@ -311,16 +319,16 @@
         <h3 id="formTitleText" style="margin:0; font-size:20px; font-weight:700;"><span>📝</span> บันทึกคิวเปิดแอร์ NTL</h3>
         <button class="btn-secondary" style="padding: 6px 12px;" onclick="closeModal('formModal')">ปิด ✕</button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body" style="padding-bottom: 0;">
         <div id="editAlertMsg" style="display: none; background: var(--warning-soft); color: var(--warning); padding: 12px 16px; border-radius: 10px; margin-bottom: 20px; font-weight: 600;">
           ⚠️ โหมดแก้ไขข้อมูลเดิม (บันทึกเพื่ออัปเดตข้อมูล)
         </div>
         <div class="entry-list" id="entryList" style="display: flex; flex-direction: column; gap: 20px;"></div>
-        <div style="position: sticky; bottom: -28px; background: var(--bg-color); padding: 20px 0; margin-top: 20px; border-top: 1px solid var(--border); display: flex; gap: 12px; justify-content: flex-end;">
-          <button class="btn-success" type="button" onclick="addEntryRow(true)" id="btnCopyRow">✨ คัดลอกแถวบน</button>
-          <button class="btn-secondary" type="button" onclick="addEntryRow(false)" id="btnAddRow">+ เพิ่มแถวใหม่</button>
-          <button class="btn-primary" id="saveBtn" type="button" onclick="saveEntries()">💾 บันทึกเข้าระบบ</button>
-        </div>
+      </div>
+      <div style="padding: 20px 28px; background: var(--surface); border-top: 1px solid var(--border); display: flex; gap: 12px; justify-content: flex-end; flex-shrink: 0;">
+        <button class="btn-success" type="button" onclick="addEntryRow(true)" id="btnCopyRow">✨ คัดลอกแถวบน</button>
+        <button class="btn-secondary" type="button" onclick="addEntryRow(false)" id="btnAddRow">+ เพิ่มแถวใหม่</button>
+        <button class="btn-primary" id="saveBtn" type="button" onclick="saveEntries()">💾 บันทึกเข้าระบบ</button>
       </div>
     </div>
   </div>
@@ -345,7 +353,7 @@
         <button class="btn-secondary" style="padding: 6px 12px;" onclick="closeModal('detailModal')">✕</button>
       </div>
       <div class="modal-body" style="padding: 0;">
-        <div style="overflow-x: auto;">
+        <div style="overflow-x: auto; height: 100%;">
           <table class="data-table" id="detailTable">
             <thead>
               <tr>
@@ -355,6 +363,44 @@
             <tbody id="detailBody"></tbody>
           </table>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="exportModal" onclick="handleOverlayClose(event, 'exportModal')">
+    <div class="modal-card" style="width: min(600px, 95%);">
+      <div class="modal-head">
+        <h3 style="margin:0; font-size:18px; font-weight:700;">📥 ส่งออกข้อมูล (Export Excel)</h3>
+        <button class="btn-secondary" style="padding: 6px 12px;" onclick="closeModal('exportModal')">✕</button>
+      </div>
+      <div class="modal-body" style="background: var(--bg-color);">
+         
+         <div style="margin-bottom: 20px;">
+           <label style="font-weight:600; font-size:14px; display:block; margin-bottom:8px;">1. เลือกปีที่ต้องการดาวน์โหลด</label>
+           <select id="exportYearSelect" style="background: var(--surface);"></select>
+         </div>
+
+         <div style="margin-bottom: 20px;">
+            <label style="font-weight:600; font-size:14px; display:block; margin-bottom:12px;">2. เลือกรูปแบบการดาวน์โหลด</label>
+            <div style="display:flex; gap:16px; margin-bottom:16px;">
+               <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-weight:500;">
+                 <input type="radio" name="exportType" value="all" checked onchange="toggleExportMonthCheckboxes()"> ดาวน์โหลดทั้งปี
+               </label>
+               <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-weight:500;">
+                 <input type="radio" name="exportType" value="custom" onchange="toggleExportMonthCheckboxes()"> ระบุเดือน (หลายเดือนได้)
+               </label>
+            </div>
+
+            <div id="exportMonthGrid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap:10px; opacity:0.5; pointer-events:none;">
+               </div>
+         </div>
+
+      </div>
+      <div style="padding: 20px 28px; background: var(--surface); border-top: 1px solid var(--border); display: flex; justify-content: flex-end; flex-shrink: 0;">
+         <button class="btn-success" onclick="executeExport()">
+           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+           ดาวน์โหลด Excel
+         </button>
       </div>
     </div>
   </div>
@@ -389,6 +435,14 @@
       document.getElementById('selectedDate').value = todayIso;
       refreshAll(true);
       startAutoRefresh();
+      
+      // สร้างรายการเดือนสำหรับหน้าต่าง Export (ปลดคลาส disabled ออกและผูก event เลย)
+      let chkHtml = '';
+      monthNamesTH.forEach((m, index) => {
+         let mm = String(index+1).padStart(2, '0');
+         chkHtml += `<label class="chk-container" id="lbl-m${mm}"><input type="checkbox" class="export-month-chk" value="${mm}" onchange="updateExportMonthUI()"> ${m}</label>`;
+      });
+      document.getElementById('exportMonthGrid').innerHTML = chkHtml;
     });
 
     // ============================ Utilities ============================
@@ -441,6 +495,9 @@
     
     function toIsoDate(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
 
+    function timeToMins(t) { if(!t) return 0; let [h, m] = t.split(':').map(Number); return (h * 60) + m; }
+    function minsToTime(mins) { return `${String(Math.floor(mins / 60)).padStart(2,'0')}:${String(mins % 60).padStart(2,'0')}`; }
+
     // ============================ Data Fetching ============================
     function refreshAll(isManualTrigger = false) {
       if (isManualTrigger) openModal('loadingModal');
@@ -477,6 +534,33 @@
 
     function handleSidebarDateChange() {
       renderScheduleDashboard(document.getElementById('selectedDate').value);
+    }
+
+    // ============================ Data Processor (Core Engine) ============================
+    function processRecordsForCost(rawRecords) {
+        let timeSlots = {};
+        
+        rawRecords.forEach(r => {
+            let startMins = timeToMins(r.startTime), endMins = timeToMins(r.stopTime);
+            if (endMins <= startMins) endMins += 24 * 60; 
+            if(!timeSlots[r.dateKey]) timeSlots[r.dateKey] = new Array(48).fill(0);
+            for(let i = Math.floor(startMins / 30); i < Math.ceil(endMins / 30); i++) timeSlots[r.dateKey][i % 48] += 1; 
+        });
+
+        let processed = JSON.parse(JSON.stringify(rawRecords));
+        processed.forEach(r => {
+            let startMins = timeToMins(r.startTime), endMins = timeToMins(r.stopTime);
+            if (endMins <= startMins) endMins += 24 * 60; 
+            r.soloMins = 0; r.soloCost = 0; r.sharedMins = 0; r.sharedCost = 0;
+
+            for(let i = Math.floor(startMins / 30); i < Math.ceil(endMins / 30); i++) {
+                if(timeSlots[r.dateKey][i % 48] === 1) { r.soloMins += 30; r.soloCost += 500; } 
+                else if (timeSlots[r.dateKey][i % 48] > 1) { r.sharedMins += 30; r.sharedCost += 250; }
+            }
+            r.totalCost = r.soloCost + r.sharedCost;
+        });
+
+        return processed;
     }
 
     // ============================ Dashboard Logic ============================
@@ -521,52 +605,37 @@
       }
     }
 
-    function timeToMins(t) { if(!t) return 0; let [h, m] = t.split(':').map(Number); return (h * 60) + m; }
-    function minsToTime(mins) { return `${String(Math.floor(mins / 60)).padStart(2,'0')}:${String(mins % 60).padStart(2,'0')}`; }
-
     function calculateAndRenderDashboard() {
       const selVal = document.getElementById('reportMonth').value;
       if(!selVal || selVal === 'none') return;
 
       const mode = selVal.startsWith('Y-') ? 'year' : 'month';
       const targetVal = selVal.substring(2);
-      let records = SERVER_RECORDS.filter(r => r.dateKey.endsWith(targetVal));
+      
+      let recordsToProcess = SERVER_RECORDS.filter(r => r.dateKey.endsWith(targetVal));
+      PROCESSED_RECORDS = processRecordsForCost(recordsToProcess);
 
       let totalCost = 0, globalSoloMins = 0, globalSoloCost = 0, globalSharedMins = 0, globalSharedCost = 0;
-      let timeSlots = {}, zoneUsage = {}, chartDataMap = {};
-      
-      PROCESSED_RECORDS = JSON.parse(JSON.stringify(records));
+      let zoneUsage = {}, chartDataMap = {};
 
       PROCESSED_RECORDS.forEach(r => {
-        let startMins = timeToMins(r.startTime), endMins = timeToMins(r.stopTime);
-        if (endMins <= startMins) endMins += 24 * 60; 
-        let duration = endMins - startMins;
+        globalSoloMins += r.soloMins;
+        globalSoloCost += r.soloCost;
+        globalSharedMins += r.sharedMins;
+        globalSharedCost += r.sharedCost;
+        totalCost += r.totalCost;
 
+        let duration = r.soloMins + r.sharedMins;
         zoneUsage[r.floorZone] = (zoneUsage[r.floorZone] || 0) + duration;
+        
         let dParts = r.dateKey.split('-');
         let chartKey = mode === 'year' ? dParts[1] : r.dateKey;
         chartDataMap[chartKey] = (chartDataMap[chartKey] || 0) + duration;
-        
-        if(!timeSlots[r.dateKey]) timeSlots[r.dateKey] = new Array(48).fill(0);
-        for(let i = Math.floor(startMins / 30); i < Math.ceil(endMins / 30); i++) timeSlots[r.dateKey][i % 48] += 1; 
-      });
-
-      PROCESSED_RECORDS.forEach(r => {
-        let startMins = timeToMins(r.startTime), endMins = timeToMins(r.stopTime);
-        if (endMins <= startMins) endMins += 24 * 60; 
-        r.soloMins = 0; r.soloCost = 0; r.sharedMins = 0; r.sharedCost = 0;
-
-        for(let i = Math.floor(startMins / 30); i < Math.ceil(endMins / 30); i++) {
-            if(timeSlots[r.dateKey][i % 48] === 1) { r.soloMins += 30; r.soloCost += 500; globalSoloMins += 30; globalSoloCost += 500; } 
-            else if (timeSlots[r.dateKey][i % 48] > 1) { r.sharedMins += 30; r.sharedCost += 250; globalSharedMins += 30; globalSharedCost += 250; }
-        }
-        r.totalCost = r.soloCost + r.sharedCost;
-        totalCost += r.totalCost;
       });
 
       document.getElementById('statTotalHours').innerText = ((globalSoloMins + globalSharedMins) / 60).toFixed(1);
       document.getElementById('statTotalCost').innerText = totalCost.toLocaleString();
-      document.getElementById('statTotalTickets').innerText = records.length.toLocaleString();
+      document.getElementById('statTotalTickets').innerText = PROCESSED_RECORDS.length.toLocaleString();
       document.getElementById('statSharedHours').innerText = (globalSharedMins / 60).toFixed(1);
       document.getElementById('statSharedCost').innerText = globalSharedCost.toLocaleString();
       document.getElementById('statSoloHours').innerText = (globalSoloMins / 60).toFixed(1);
@@ -899,7 +968,6 @@
     
     function removeEntryRow(i) { if (entryRows.length <= 1) return; entryRows.splice(i, 1); renderEntryRows(); }
 
-    // ฟังก์ชันสร้างตัวเลือกเวลา 24H แบบ Dropdown
     function buildTimePicker(index, field, value) {
       let parts = (value || '18:00').split(':');
       let hHtml = `<select class="time-sel" onchange="updateTime(${index}, '${field}', 'h', this.value)">`;
@@ -986,7 +1054,114 @@
     function openModal(id) { document.getElementById(id).classList.add('show'); }
     function closeModal(id) { document.getElementById(id).classList.remove('show'); }
     function handleOverlayClose(e, id) { if (e.target.id === id) closeModal(id); }
-    function exportToExcel() { /* Use previous exportToExcel logic */ }
+
+    // ============================ Advance Export System ============================
+    function openExportModal() {
+       if(!SERVER_RECORDS || SERVER_RECORDS.length === 0) return alert('ไม่มีข้อมูลในระบบสำหรับการ Export');
+       
+       let yearsSet = new Set();
+       SERVER_RECORDS.forEach(r => {
+          if(r.dateKey && r.dateKey.split('-').length === 3) {
+             yearsSet.add(r.dateKey.split('-')[2]);
+          }
+       });
+       let yearsArr = Array.from(yearsSet).sort((a,b) => b - a);
+       let html = '';
+       yearsArr.forEach(y => html += `<option value="${y}">ปี พ.ศ. ${parseInt(y)+543} (ค.ศ.${y})</option>`);
+       document.getElementById('exportYearSelect').innerHTML = html;
+       
+       toggleExportMonthCheckboxes();
+       openModal('exportModal');
+    }
+
+    function toggleExportMonthCheckboxes() {
+       let exportType = document.querySelector('input[name="exportType"]:checked').value;
+       let grid = document.getElementById('exportMonthGrid');
+       let checkboxes = document.querySelectorAll('.export-month-chk');
+       let labels = document.querySelectorAll('.chk-container');
+
+       if (exportType === 'all') {
+          grid.style.opacity = '0.5';
+          grid.style.pointerEvents = 'none';
+          checkboxes.forEach(chk => chk.checked = true);
+          labels.forEach(lbl => { lbl.style.borderColor = 'var(--border)'; lbl.style.background = 'var(--surface-2)'; });
+       } else {
+          grid.style.opacity = '1';
+          grid.style.pointerEvents = 'auto'; // เปิดให้คลิกได้
+          checkboxes.forEach(chk => chk.checked = false);
+          updateExportMonthUI();
+       }
+    }
+
+    function updateExportMonthUI() {
+       if(document.querySelector('input[name="exportType"]:checked').value === 'all') return;
+       document.querySelectorAll('.export-month-chk').forEach(chk => {
+          let lbl = chk.closest('.chk-container');
+          if(chk.checked) {
+             lbl.style.borderColor = 'var(--primary-2)';
+             lbl.style.background = 'var(--primary-soft)';
+          } else {
+             lbl.style.borderColor = 'var(--border)';
+             lbl.style.background = 'var(--surface)';
+          }
+       });
+    }
+
+    function executeExport() {
+       let selectedYear = document.getElementById('exportYearSelect').value;
+       let exportType = document.querySelector('input[name="exportType"]:checked').value;
+       let selectedMonths = [];
+
+       if (exportType === 'custom') {
+          document.querySelectorAll('.export-month-chk:checked').forEach(chk => selectedMonths.push(chk.value));
+          if (selectedMonths.length === 0) return alert('กรุณาเลือกอย่างน้อย 1 เดือน');
+       } else {
+          for(let i=1; i<=12; i++) selectedMonths.push(String(i).padStart(2,'0'));
+       }
+
+       // 1. ดึงข้อมูลตามปีและเดือนที่เลือก
+       let rawData = SERVER_RECORDS.filter(r => {
+          let parts = r.dateKey.split('-');
+          return parts[2] === selectedYear && selectedMonths.includes(parts[1]);
+       });
+
+       if (rawData.length === 0) return alert('ไม่พบข้อมูลในช่วงเวลาที่เลือก');
+
+       // 2. ส่งข้อมูลไปประมวลผลคำนวณราคาแบบ Realtime
+       let processedData = processRecordsForCost(rawData);
+
+       // 3. จัดเรียงคอลัมน์สำหรับ Excel
+       const exportData = processedData.map((r, i) => ({
+          "ลำดับ": i+1,
+          "วันที่": r.dateKey,
+          "อาคาร": r.building,
+          "โซน/ชั้น": r.floorZone,
+          "แผนก": r.department || '-',
+          "Cost Center": r.costCenter || '-',
+          "เวลาเริ่ม": r.startTime,
+          "เวลาสิ้นสุด": r.stopTime,
+          "ประเภทการใช้งาน": r.soloMins > 0 && r.sharedMins > 0 ? "ผสม (เดี่ยว+ร่วม)" : r.soloMins > 0 ? "OT เหมา (เดี่ยว)" : "OT ตรม. (ร่วม)",
+          "ชม. เหมา (เดี่ยว)": (r.soloMins / 60).toFixed(1),
+          "ชม. ตรม. (ร่วม)": (r.sharedMins / 60).toFixed(1),
+          "ค่าใช้จ่ายเหมา (฿)": r.soloCost,
+          "ค่าใช้จ่ายตรม. (฿)": r.sharedCost,
+          "รวมค่าใช้จ่าย (฿)": r.totalCost,
+          "หมายเหตุ": r.remark || '-'
+      }));
+
+      // 4. Generate Excel File
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "OT_Air_Data");
+      
+      let fileName = exportType === 'all' 
+                     ? `NTL_OTAir_Year_${selectedYear}.xlsx` 
+                     : `NTL_OTAir_SelectedMonths_${selectedYear}.xlsx`;
+      
+      XLSX.writeFile(workbook, fileName);
+      closeModal('exportModal');
+      showToast('ดาวน์โหลดไฟล์ Excel สำเร็จ!');
+    }
   </script>
 </body>
 </html>
