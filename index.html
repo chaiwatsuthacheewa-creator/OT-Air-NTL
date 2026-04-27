@@ -100,7 +100,7 @@
     .b-header h2 { margin: 0; font-size: 20px; color: var(--text); font-weight: 700; display: flex; align-items: center; gap: 10px;}
     
     .grid-kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-    .dashboard-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; } /* ซ้ายใหญ่กว่าขวา */
+    .dashboard-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; } 
     
     .kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s ease; box-shadow: var(--shadow-sm);}
     .kpi-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--primary-2); }
@@ -114,6 +114,13 @@
     input[type="text"], input[type="date"], select { width: 100%; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-color); color: var(--text); outline: none; transition: all 0.2s ease;}
     input:focus, select:focus { border-color: var(--primary-2); box-shadow: 0 0 0 3px var(--primary-soft); background: var(--surface); }
     
+    /* ระบบกรอกเวลา 24H */
+    .custom-time-wrapper { display: flex; align-items: center; gap: 4px; background: var(--bg-color); border: 1px solid var(--border); border-radius: 10px; padding: 6px 12px; transition: all 0.2s;}
+    .custom-time-wrapper:focus-within { border-color: var(--primary-2); box-shadow: 0 0 0 3px var(--primary-soft); background: var(--surface); }
+    .time-sel { flex: 1; appearance: none; -webkit-appearance: none; background: transparent; border: none; font-size: 15px; font-weight: 600; color: var(--text); text-align: center; padding: 6px 2px; cursor: pointer; outline: none;}
+    .time-sel:hover { background: var(--surface-2); border-radius: 6px;}
+    .time-sep { font-weight: 700; color: var(--muted); font-size: 16px;}
+
     button { border: none; cursor: pointer; padding: 12px 18px; border-radius: 10px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s ease; }
     button:active { transform: scale(0.97); }
     .btn-primary { background: var(--primary-2); color: #fff; box-shadow: 0 4px 10px rgba(59,130,246,0.3);}
@@ -220,7 +227,7 @@
         </div>
         <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
           <button class="theme-toggle" onclick="toggleTheme()" type="button">
-            <span id="themeIconWrap"☀️</span> โหมดกลางวัน
+            <span id="themeIconWrap">☀️</span> โหมดกลางวัน
           </button>
           <div class="update-indicator" id="loadingStatus"><span class="dot"></span> <span id="statusText">กำลังซิงค์...</span></div>
         </div>
@@ -374,7 +381,7 @@
     let editingOldRecord = null;
     let autoRefreshTimer;
     let otChartInstance = null;
-    let currentlySelectedCalendarDate = null; // Track selected date on calendar
+    let currentlySelectedCalendarDate = null;
 
     document.addEventListener('DOMContentLoaded', function () {
       initTheme();
@@ -535,13 +542,11 @@
         if (endMins <= startMins) endMins += 24 * 60; 
         let duration = endMins - startMins;
 
-        // For Year Mode: Top Zones & Chart
         zoneUsage[r.floorZone] = (zoneUsage[r.floorZone] || 0) + duration;
         let dParts = r.dateKey.split('-');
         let chartKey = mode === 'year' ? dParts[1] : r.dateKey;
         chartDataMap[chartKey] = (chartDataMap[chartKey] || 0) + duration;
         
-        // Time Slot Calculation for Cost
         if(!timeSlots[r.dateKey]) timeSlots[r.dateKey] = new Array(48).fill(0);
         for(let i = Math.floor(startMins / 30); i < Math.ceil(endMins / 30); i++) timeSlots[r.dateKey][i % 48] += 1; 
       });
@@ -559,7 +564,6 @@
         totalCost += r.totalCost;
       });
 
-      // Update KPI HTML
       document.getElementById('statTotalHours').innerText = ((globalSoloMins + globalSharedMins) / 60).toFixed(1);
       document.getElementById('statTotalCost').innerText = totalCost.toLocaleString();
       document.getElementById('statTotalTickets').innerText = records.length.toLocaleString();
@@ -568,12 +572,10 @@
       document.getElementById('statSoloHours').innerText = (globalSoloMins / 60).toFixed(1);
       document.getElementById('statSoloCost').innerText = globalSoloCost.toLocaleString();
 
-      // Render Left/Right Panels based on Mode
       const leftPanel = document.getElementById('panelLeft');
       const rightPanel = document.getElementById('panelRight');
 
       if (mode === 'year') {
-         // --- YEAR MODE ---
          leftPanel.innerHTML = `
             <div class="panel-title">📈 สรุปชั่วโมงการใช้งานรายเดือน (ปี ${parseInt(targetVal)+543})</div>
             <div style="position: relative; height: 300px; width: 100%;"><canvas id="otChart"></canvas></div>
@@ -603,14 +605,11 @@
          rightPanel.innerHTML = topHtml;
 
       } else {
-         // --- MONTH MODE ---
          let [mm, yyyy] = targetVal.split('-');
-         
          leftPanel.innerHTML = `
             <div class="panel-title">📅 ปฏิทินเดือน ${monthNamesTH[parseInt(mm)-1]} ${parseInt(yyyy)+543} <span style="font-size:12px; font-weight:normal; color:var(--muted);">(คลิกวันที่เพื่อดูรายละเอียด)</span></div>
             <div id="calendarGrid" class="calendar-grid"></div>
          `;
-         
          rightPanel.innerHTML = `
             <div class="panel-title" id="dailyListTitle">📌 ข้อมูลเปิดแอร์ ประจำวันที่...</div>
             <div id="dailyListContent" style="display:flex; flex-direction:column; gap:12px; overflow-y:auto; max-height:450px; padding-right:8px;"></div>
@@ -618,20 +617,14 @@
 
          renderCalendar(mm, yyyy);
 
-         // Determine which day to select by default (Today if in month, else 1st day)
          let today = new Date();
-         let defaultDateStr = "";
-         if(today.getMonth()+1 === parseInt(mm) && today.getFullYear() === parseInt(yyyy)){
-            defaultDateStr = `${String(today.getDate()).padStart(2,'0')}-${mm}-${yyyy}`;
-         } else {
-            defaultDateStr = `01-${mm}-${yyyy}`;
-         }
+         let defaultDateStr = (today.getMonth()+1 === parseInt(mm) && today.getFullYear() === parseInt(yyyy)) 
+                              ? `${String(today.getDate()).padStart(2,'0')}-${mm}-${yyyy}` 
+                              : `01-${mm}-${yyyy}`;
          
-         // If a date was already clicked in this month, preserve it
          if (currentlySelectedCalendarDate && currentlySelectedCalendarDate.endsWith(targetVal)) {
             defaultDateStr = currentlySelectedCalendarDate;
          }
-
          selectDateOnCalendar(defaultDateStr);
       }
     }
@@ -695,9 +688,7 @@
 
     function selectDateOnCalendar(dateStr) {
        currentlySelectedCalendarDate = dateStr;
-       // Remove selected class from all
        document.querySelectorAll('.cal-day').forEach(el => el.classList.remove('selected'));
-       // Add to clicked
        let clickedEl = document.getElementById(`calDay-${dateStr}`);
        if(clickedEl) clickedEl.classList.add('selected');
 
@@ -750,8 +741,6 @@
     }
 
     // ============================ Schedule 4 Days & Modals ============================
-    // (Logic Remains Similar, adjusted slightly for new UI)
-    
     function calculateDuration(start, end) {
       if (!start || !end) return '';
       let [sh, sm] = start.split(':').map(Number); let [eh, em] = end.split(':').map(Number);
@@ -836,7 +825,6 @@
     }
 
     function showDetailModal(filterType, filterValue = null) {
-       // Similar to previous implementation, keeping it intact for KPI clicks
        if(PROCESSED_RECORDS.length === 0) return alert('ไม่มีข้อมูล');
        let filtered = PROCESSED_RECORDS;
        if(filterType==='shared') filtered = PROCESSED_RECORDS.filter(r=>r.sharedMins>0);
@@ -908,7 +896,28 @@
       if (clone && entryRows.length) row = JSON.parse(JSON.stringify(entryRows[entryRows.length - 1]));
       entryRows.push(row); renderEntryRows();
     }
+    
     function removeEntryRow(i) { if (entryRows.length <= 1) return; entryRows.splice(i, 1); renderEntryRows(); }
+
+    // ฟังก์ชันสร้างตัวเลือกเวลา 24H แบบ Dropdown
+    function buildTimePicker(index, field, value) {
+      let parts = (value || '18:00').split(':');
+      let hHtml = `<select class="time-sel" onchange="updateTime(${index}, '${field}', 'h', this.value)">`;
+      for(let i=0; i<24; i++) { let p = String(i).padStart(2,'0'); hHtml += `<option value="${p}" ${p===parts[0]?'selected':''}>${p}</option>`; }
+      hHtml += `</select>`;
+      
+      let mHtml = `<select class="time-sel" onchange="updateTime(${index}, '${field}', 'm', this.value)">`;
+      for(let i=0; i<60; i+=30) { let p = String(i).padStart(2,'0'); mHtml += `<option value="${p}" ${p===parts[1]?'selected':''}>${p}</option>`; }
+      mHtml += `</select>`;
+      
+      return `<div class="custom-time-wrapper">${hHtml} <span class="time-sep">:</span> ${mHtml}</div>`;
+    }
+
+    function updateTime(i, field, type, val) {
+      let parts = (entryRows[i][field] || '18:00').split(':');
+      if(type === 'h') parts[0] = val; if(type === 'm') parts[1] = val;
+      entryRows[i][field] = parts.join(':');
+    }
 
     function renderEntryRows() {
       document.getElementById('entryList').innerHTML = entryRows.map((row, i) => {
@@ -921,8 +930,10 @@
               <div style="grid-column: span 4;"><label style="font-size:13px; color:var(--muted); font-weight:600;">📅 วันที่</label><input type="date" value="${row.date}" onchange="entryRows[${i}].date=this.value"></div>
               <div style="grid-column: span 4;"><label style="font-size:13px; color:var(--muted); font-weight:600;">🏢 อาคาร</label><select onchange="entryRows[${i}].building=this.value; entryRows[${i}].floorZone=CONFIG.buildings.find(x=>x.name===this.value).zones[0]; renderEntryRows();">${bOpts}</select></div>
               <div style="grid-column: span 4;"><label style="font-size:13px; color:var(--muted); font-weight:600;">📍 โซน / ชั้น</label><select onchange="entryRows[${i}].floorZone=this.value">${zOpts}</select></div>
-              <div style="grid-column: span 3;"><label style="font-size:13px; color:var(--muted); font-weight:600;">เริ่ม (HH:MM)</label><input type="time" value="${row.startTime}" onchange="entryRows[${i}].startTime=this.value"></div>
-              <div style="grid-column: span 3;"><label style="font-size:13px; color:var(--muted); font-weight:600;">สิ้นสุด (HH:MM)</label><input type="time" value="${row.stopTime}" onchange="entryRows[${i}].stopTime=this.value"></div>
+              
+              <div style="grid-column: span 3;"><label style="font-size:13px; color:var(--muted); font-weight:600;">เริ่ม (ชม:นาที)</label>${buildTimePicker(i, 'startTime', row.startTime)}</div>
+              <div style="grid-column: span 3;"><label style="font-size:13px; color:var(--muted); font-weight:600;">สิ้นสุด (ชม:นาที)</label>${buildTimePicker(i, 'stopTime', row.stopTime)}</div>
+              
               <div style="grid-column: span 3;"><label style="font-size:13px; color:var(--muted); font-weight:600;">👥 ฝ่าย</label><input type="text" value="${row.department}" placeholder="HR, IT" onchange="entryRows[${i}].department=this.value"></div>
               <div style="grid-column: span 3;"><label style="font-size:13px; color:var(--muted); font-weight:600;">💰 Cost Center</label><input type="text" value="${row.costCenter}" placeholder="12345" onchange="entryRows[${i}].costCenter=this.value"></div>
               <div style="grid-column: span 12;"><label style="font-size:13px; color:var(--muted); font-weight:600;">💬 หมายเหตุ</label><input type="text" value="${row.remark}" onchange="entryRows[${i}].remark=this.value"></div>
