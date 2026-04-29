@@ -110,12 +110,23 @@
     .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 24px; display: flex; flex-direction: column; box-shadow: var(--shadow-sm);}
     .panel-title { font-weight: 700; font-size: 16px; color: var(--text); margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;}
 
+    /* Building Filter Buttons */
+    .b-filter-btn {
+        background: var(--surface-2); color: var(--muted); border: 1px solid var(--border); 
+        padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; 
+        transition: all 0.2s; font-size: 14px; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .b-filter-btn:hover { background: var(--border); color: var(--text); }
+    .b-filter-btn.active {
+        background: var(--primary-soft); color: var(--primary-2); 
+        border-color: var(--primary-2); box-shadow: inset 0 0 0 1px var(--primary-2);
+    }
+
     /* Inputs & Buttons */
     input, select, button { font-family: 'Prompt', sans-serif; font-size: 15px; font-weight: 500;}
     input[type="text"], input[type="date"], select { width: 100%; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-color); color: var(--text); outline: none; transition: all 0.2s ease;}
     input:focus, select:focus { border-color: var(--primary-2); box-shadow: 0 0 0 3px var(--primary-soft); background: var(--surface); }
     
-    /* ระบบกรอกเวลา 24H */
     .custom-time-wrapper { display: flex; align-items: center; gap: 4px; background: var(--bg-color); border: 1px solid var(--border); border-radius: 10px; padding: 6px 12px; transition: all 0.2s;}
     .custom-time-wrapper:focus-within { border-color: var(--primary-2); box-shadow: 0 0 0 3px var(--primary-soft); background: var(--surface); }
     .time-sel { flex: 1; appearance: none; -webkit-appearance: none; background: transparent; border: none; font-size: 15px; font-weight: 600; color: var(--text); text-align: center; padding: 6px 2px; cursor: pointer; outline: none;}
@@ -154,13 +165,11 @@
     .modal { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: var(--backdrop); backdrop-filter: blur(4px); z-index: 9999; padding: 20px; opacity: 0; visibility: hidden; pointer-events: none; transition: all 0.3s; }
     .modal.show { opacity: 1; visibility: visible; pointer-events: auto; }
     
-    /* Scrollbar สำหรับ PopUp */
     .modal-card { width: min(1200px, 95%); max-height: 90vh; background: var(--bg-color); border: 1px solid var(--border); border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.3); transform: scale(0.95); transition: transform 0.3s; }
     .modal.show .modal-card { transform: scale(1); }
     .modal-head { background: var(--surface); border-bottom: 1px solid var(--border); padding: 20px 28px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
     .modal-body { padding: 28px; flex: 1; overflow-y: auto; }
 
-    /* Export Modal Specific */
     .chk-container { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px 12px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; transition: all 0.2s; font-size: 14px; font-weight: 500;}
     .chk-container:hover { border-color: var(--primary-2); }
     .chk-container input { width: auto; cursor: pointer; }
@@ -245,20 +254,31 @@
         
         <div style="display: none; flex-direction: column; gap: 24px;" id="analyticsSection">
           
-          <div class="b-card" style="padding: 20px 28px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; border-top: 4px solid var(--primary-2);">
-             <h2 style="margin:0; font-size: 20px; font-weight: 700; display:flex; gap:10px; align-items:center;">
-               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary-2)" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
-               ภาพรวมการใช้งาน OT Air
-             </h2>
-             <div style="display: flex; gap: 12px; align-items: center;">
-                <select id="reportMonth" style="width: auto; min-width: 250px; font-weight: 600;" onchange="calculateAndRenderDashboard()">
-                  <option value="none">- กำลังโหลดข้อมูล -</option>
-                </select>
-                <button class="btn-success" onclick="openExportModal()">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                  Export Data
-                </button>
-             </div>
+          <div class="b-card" style="padding: 20px 28px; display: flex; flex-direction: column; gap: 16px; border-top: 4px solid var(--primary-2);">
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+               <h2 style="margin:0; font-size: 20px; font-weight: 700; display:flex; gap:10px; align-items:center;">
+                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary-2)" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+                 ภาพรวมการใช้งาน OT Air
+               </h2>
+               <div style="display: flex; gap: 12px; align-items: center;">
+                  <select id="reportMonth" style="width: auto; min-width: 250px; font-weight: 600;" onchange="calculateAndRenderDashboard()">
+                    <option value="none">- กำลังโหลดข้อมูล -</option>
+                  </select>
+                  <button class="btn-success" onclick="openExportModal()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Export Data
+                  </button>
+               </div>
+            </div>
+            
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="buildingFilterContainer">
+                <button class="b-filter-btn active" onclick="setBuildingFilter('All')">🏢 ทุกอาคาร</button>
+                <button class="b-filter-btn" onclick="setBuildingFilter('Ari Hills')">📍 Ari Hills</button>
+                <button class="b-filter-btn" onclick="setBuildingFilter('ESV Tower')">📍 ESV Tower</button>
+                <button class="b-filter-btn" onclick="setBuildingFilter('KSL Tower')">📍 KSL Tower</button>
+            </div>
+
           </div>
 
           <div class="grid-kpi">
@@ -374,12 +394,10 @@
         <button class="btn-secondary" style="padding: 6px 12px;" onclick="closeModal('exportModal')">✕</button>
       </div>
       <div class="modal-body" style="background: var(--bg-color);">
-         
          <div style="margin-bottom: 20px;">
            <label style="font-weight:600; font-size:14px; display:block; margin-bottom:8px;">1. เลือกปีที่ต้องการดาวน์โหลด</label>
            <select id="exportYearSelect" style="background: var(--surface);"></select>
          </div>
-
          <div style="margin-bottom: 20px;">
             <label style="font-weight:600; font-size:14px; display:block; margin-bottom:12px;">2. เลือกรูปแบบการดาวน์โหลด</label>
             <div style="display:flex; gap:16px; margin-bottom:16px;">
@@ -390,11 +408,9 @@
                  <input type="radio" name="exportType" value="custom" onchange="toggleExportMonthCheckboxes()"> ระบุเดือน (หลายเดือนได้)
                </label>
             </div>
-
             <div id="exportMonthGrid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap:10px; opacity:0.5; pointer-events:none;">
                </div>
          </div>
-
       </div>
       <div style="padding: 20px 28px; background: var(--surface); border-top: 1px solid var(--border); display: flex; justify-content: flex-end; flex-shrink: 0;">
          <button class="btn-success" onclick="executeExport()">
@@ -428,6 +444,7 @@
     let autoRefreshTimer;
     let otChartInstance = null;
     let currentlySelectedCalendarDate = null;
+    let currentBuildingFilter = 'All'; // ตัวแปรเก็บตึกที่เลือกล่าสุด
 
     document.addEventListener('DOMContentLoaded', function () {
       initTheme();
@@ -436,7 +453,6 @@
       refreshAll(true);
       startAutoRefresh();
       
-      // สร้างรายการเดือนสำหรับหน้าต่าง Export (ปลดคลาส disabled ออกและผูก event เลย)
       let chkHtml = '';
       monthNamesTH.forEach((m, index) => {
          let mm = String(index+1).padStart(2, '0');
@@ -451,7 +467,6 @@
       document.getElementById('analyticsSection').style.display = tabId === 'analytics' ? 'flex' : 'none';
       document.getElementById('navSchedule').classList.toggle('active', tabId === 'schedule');
       document.getElementById('navAnalytics').classList.toggle('active', tabId === 'analytics');
-      
       if (tabId === 'analytics' && otChartInstance) otChartInstance.resize();
       if (window.innerWidth <= 1024) toggleSidebar();
     }
@@ -471,9 +486,7 @@
       }
     }
 
-    function updateThemeUI(isDark) {
-      document.getElementById('themeIconWrap').innerHTML = isDark ? '🌙' : '☀️';
-    }
+    function updateThemeUI(isDark) { document.getElementById('themeIconWrap').innerHTML = isDark ? '🌙' : '☀️'; }
 
     function showToast(message) {
       const toast = document.getElementById('toastMsg');
@@ -492,9 +505,7 @@
     }
 
     function returnToMainMenu() { window.location.href = MAIN_MENU_URL; }
-    
     function toIsoDate(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
-
     function timeToMins(t) { if(!t) return 0; let [h, m] = t.split(':').map(Number); return (h * 60) + m; }
     function minsToTime(mins) { return `${String(Math.floor(mins / 60)).padStart(2,'0')}:${String(mins % 60).padStart(2,'0')}`; }
 
@@ -532,19 +543,34 @@
       }, 15000); 
     }
 
-    function handleSidebarDateChange() {
-      renderScheduleDashboard(document.getElementById('selectedDate').value);
+    function handleSidebarDateChange() { renderScheduleDashboard(document.getElementById('selectedDate').value); }
+
+    // ============================ Building Filter Logic ============================
+    function setBuildingFilter(bName) {
+        currentBuildingFilter = bName;
+        document.querySelectorAll('.b-filter-btn').forEach(btn => {
+            if(btn.innerText.includes(bName.split(' ')[0]) || (bName === 'All' && btn.innerText.includes('ทุกอาคาร'))) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+        calculateAndRenderDashboard();
     }
 
-    // ============================ Data Processor (Core Engine) ============================
+    // ============================ Cost Processing Engine ============================
+    // อัปเดตสูตรคำนวณแยกตามอาคารตามที่ Request 
     function processRecordsForCost(rawRecords) {
         let timeSlots = {};
         
         rawRecords.forEach(r => {
             let startMins = timeToMins(r.startTime), endMins = timeToMins(r.stopTime);
             if (endMins <= startMins) endMins += 24 * 60; 
-            if(!timeSlots[r.dateKey]) timeSlots[r.dateKey] = new Array(48).fill(0);
-            for(let i = Math.floor(startMins / 30); i < Math.ceil(endMins / 30); i++) timeSlots[r.dateKey][i % 48] += 1; 
+            
+            // แยกการซ้อนทับตามตึก
+            let slotKey = r.building + '_' + r.dateKey; 
+            if(!timeSlots[slotKey]) timeSlots[slotKey] = new Array(48).fill(0);
+            for(let i = Math.floor(startMins / 30); i < Math.ceil(endMins / 30); i++) timeSlots[slotKey][i % 48] += 1; 
         });
 
         let processed = JSON.parse(JSON.stringify(rawRecords));
@@ -552,10 +578,28 @@
             let startMins = timeToMins(r.startTime), endMins = timeToMins(r.stopTime);
             if (endMins <= startMins) endMins += 24 * 60; 
             r.soloMins = 0; r.soloCost = 0; r.sharedMins = 0; r.sharedCost = 0;
+            
+            let slotKey = r.building + '_' + r.dateKey;
 
             for(let i = Math.floor(startMins / 30); i < Math.ceil(endMins / 30); i++) {
-                if(timeSlots[r.dateKey][i % 48] === 1) { r.soloMins += 30; r.soloCost += 500; } 
-                else if (timeSlots[r.dateKey][i % 48] > 1) { r.sharedMins += 30; r.sharedCost += 250; }
+                let overlapCount = timeSlots[slotKey][i % 48];
+                let isSolo = overlapCount === 1;
+
+                if (r.building.includes("Ari Hills")) {
+                    if(isSolo) { r.soloMins += 30; r.soloCost += 500; } 
+                    else { r.sharedMins += 30; r.sharedCost += 250; }
+                } else if (r.building.includes("KSL Tower")) {
+                    // 1625.20 บาท/ชั่วโมง (812.60 บาท/ครึ่งชั่วโมง)
+                    if(isSolo) { r.soloMins += 30; r.soloCost += 812.6; } 
+                    else { r.sharedMins += 30; r.sharedCost += 812.6; }
+                } else if (r.building.includes("ESV Tower")) {
+                    // 300 บาท/ชั่วโมง (150 บาท/ครึ่งชั่วโมง)
+                    if(isSolo) { r.soloMins += 30; r.soloCost += 150; } 
+                    else { r.sharedMins += 30; r.sharedCost += 150; }
+                } else {
+                    if(isSolo) { r.soloMins += 30; r.soloCost += 500; } 
+                    else { r.sharedMins += 30; r.sharedCost += 250; }
+                }
             }
             r.totalCost = r.soloCost + r.sharedCost;
         });
@@ -598,8 +642,15 @@
       }
 
       select.innerHTML = html || `<option value="none">- ไม่มีข้อมูล -</option>`;
+      
+      // Default Load = Current Month
+      let today = new Date();
+      let currentMStr = `M-${String(today.getMonth()+1).padStart(2,'0')}-${today.getFullYear()}`;
+      
       if (currentSelection && Array.from(select.options).some(o => o.value === currentSelection)) {
         select.value = currentSelection;
+      } else if (monthsArr.includes(currentMStr.substring(2))) {
+        select.value = currentMStr;
       } else if (monthsArr.length > 0) {
         select.value = `M-${monthsArr[0]}`; 
       }
@@ -612,8 +663,16 @@
       const mode = selVal.startsWith('Y-') ? 'year' : 'month';
       const targetVal = selVal.substring(2);
       
+      // กรองเดือนที่เลือก
       let recordsToProcess = SERVER_RECORDS.filter(r => r.dateKey.endsWith(targetVal));
-      PROCESSED_RECORDS = processRecordsForCost(recordsToProcess);
+      let allProcessedThisMonth = processRecordsForCost(recordsToProcess);
+
+      // กรองตึกที่เลือก (ถ้ามี)
+      if (currentBuildingFilter !== 'All') {
+          PROCESSED_RECORDS = allProcessedThisMonth.filter(r => r.building.includes(currentBuildingFilter));
+      } else {
+          PROCESSED_RECORDS = allProcessedThisMonth;
+      }
 
       let totalCost = 0, globalSoloMins = 0, globalSoloCost = 0, globalSharedMins = 0, globalSharedCost = 0;
       let zoneUsage = {}, chartDataMap = {};
@@ -634,12 +693,12 @@
       });
 
       document.getElementById('statTotalHours').innerText = ((globalSoloMins + globalSharedMins) / 60).toFixed(1);
-      document.getElementById('statTotalCost').innerText = totalCost.toLocaleString();
+      document.getElementById('statTotalCost').innerText = totalCost.toLocaleString('th-TH', {minimumFractionDigits: 0, maximumFractionDigits: 2});
       document.getElementById('statTotalTickets').innerText = PROCESSED_RECORDS.length.toLocaleString();
       document.getElementById('statSharedHours').innerText = (globalSharedMins / 60).toFixed(1);
-      document.getElementById('statSharedCost').innerText = globalSharedCost.toLocaleString();
+      document.getElementById('statSharedCost').innerText = globalSharedCost.toLocaleString('th-TH', {minimumFractionDigits: 0, maximumFractionDigits: 2});
       document.getElementById('statSoloHours').innerText = (globalSoloMins / 60).toFixed(1);
-      document.getElementById('statSoloCost').innerText = globalSoloCost.toLocaleString();
+      document.getElementById('statSoloCost').innerText = globalSoloCost.toLocaleString('th-TH', {minimumFractionDigits: 0, maximumFractionDigits: 2});
 
       const leftPanel = document.getElementById('panelLeft');
       const rightPanel = document.getElementById('panelRight');
@@ -655,7 +714,7 @@
          let maxZone = sortedZones.length > 0 ? sortedZones[0][1] : 1;
          let topHtml = `<div class="panel-title">🏆 Top 5 โซนที่ใช้งานสูงสุด</div><div style="display:flex; flex-direction:column; gap:16px; flex:1; justify-content:center;">`;
          
-         if(sortedZones.length === 0) topHtml += `<div class="empty-msg">ไม่มีข้อมูลการจองในปีนี้</div>`;
+         if(sortedZones.length === 0) topHtml += `<div class="empty-msg">ไม่มีข้อมูลการจอง</div>`;
          else {
             sortedZones.forEach((z, i) => {
                let pct = (z[1] / maxZone) * 100;
@@ -768,10 +827,15 @@
        let p = dateStr.split('-');
        document.getElementById('dailyListTitle').innerHTML = `📌 ข้อมูลเปิดแอร์ ประจำวันที่ <span style="color:var(--primary-2)">${p[0]}/${p[1]}/${parseInt(p[2])+543}</span>`;
        
-       let recordsToday = SERVER_RECORDS.filter(r => r.dateKey === dateStr);
+       let recordsToday = PROCESSED_RECORDS.filter(r => r.dateKey === dateStr);
        let html = '';
 
-       CONFIG.buildings.forEach(b => {
+       let buildingsToRender = CONFIG.buildings;
+       if (currentBuildingFilter !== 'All') {
+           buildingsToRender = CONFIG.buildings.filter(b => b.name.includes(currentBuildingFilter));
+       }
+
+       buildingsToRender.forEach(b => {
           let bRecords = recordsToday.filter(r => r.building === b.name);
           html += `
              <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 4px; box-shadow: var(--shadow-sm);">
@@ -797,6 +861,7 @@
                      <div style="display:flex; flex-wrap:wrap; gap:8px; font-size:13px; align-items:center; color:var(--muted);">
                         <span style="background:var(--tag-1); color:var(--tag-1-text); padding:2px 8px; border-radius:4px;">${r.department || 'ไม่ระบุ'}</span>
                         <span style="background:var(--surface); border:1px solid var(--border); padding:2px 8px; border-radius:4px;">CC: ${r.costCenter || '-'}</span>
+                        <span style="font-weight:700; color:var(--danger);">฿${r.totalCost.toLocaleString('th-TH', {minimumFractionDigits:0, maximumFractionDigits:2})}</span>
                         <span style="margin-left:auto; font-weight:600;">⏳ ${dur}</span>
                      </div>
                   </div>
@@ -908,7 +973,7 @@
             <td><b style="color:var(--primary-2);">${r.department||'-'}</b><br><span style="font-size:12px; color:var(--muted);">CC: ${r.costCenter||'-'}</span></td>
             <td>${r.startTime}-${r.stopTime}</td>
             <td>${r.soloMins>0 && r.sharedMins>0 ? 'ผสม' : r.soloMins>0 ? 'เหมา' : 'ตรม.'}</td>
-            <td style="text-align:right; color:var(--danger); font-weight:700;">฿${r.totalCost.toLocaleString()}</td>
+            <td style="text-align:right; color:var(--danger); font-weight:700;">฿${r.totalCost.toLocaleString('th-TH', {minimumFractionDigits:0, maximumFractionDigits:2})}</td>
             <td style="text-align:center;">
                <button class="btn-secondary" style="padding:4px; font-size:12px;" onclick="openFormModalForEdit('${payload}')">✏️</button>
                <button class="btn-danger" style="padding:4px; font-size:12px;" onclick="deleteRecord('${payload}')">🗑️</button>
@@ -1087,7 +1152,7 @@
           labels.forEach(lbl => { lbl.style.borderColor = 'var(--border)'; lbl.style.background = 'var(--surface-2)'; });
        } else {
           grid.style.opacity = '1';
-          grid.style.pointerEvents = 'auto'; // เปิดให้คลิกได้
+          grid.style.pointerEvents = 'auto'; 
           checkboxes.forEach(chk => chk.checked = false);
           updateExportMonthUI();
        }
@@ -1119,7 +1184,6 @@
           for(let i=1; i<=12; i++) selectedMonths.push(String(i).padStart(2,'0'));
        }
 
-       // 1. ดึงข้อมูลตามปีและเดือนที่เลือก
        let rawData = SERVER_RECORDS.filter(r => {
           let parts = r.dateKey.split('-');
           return parts[2] === selectedYear && selectedMonths.includes(parts[1]);
@@ -1127,10 +1191,9 @@
 
        if (rawData.length === 0) return alert('ไม่พบข้อมูลในช่วงเวลาที่เลือก');
 
-       // 2. ส่งข้อมูลไปประมวลผลคำนวณราคาแบบ Realtime
+       // นำเข้าสูตรคำนวณเงินใหม่ให้เป๊ะก่อนโหลดลง Excel
        let processedData = processRecordsForCost(rawData);
 
-       // 3. จัดเรียงคอลัมน์สำหรับ Excel
        const exportData = processedData.map((r, i) => ({
           "ลำดับ": i+1,
           "วันที่": r.dateKey,
@@ -1149,7 +1212,6 @@
           "หมายเหตุ": r.remark || '-'
       }));
 
-      // 4. Generate Excel File
       const worksheet = XLSX.utils.json_to_sheet(exportData);
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "OT_Air_Data");
