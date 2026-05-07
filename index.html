@@ -747,8 +747,8 @@
 
          let today = new Date();
          let defaultDateStr = (today.getMonth()+1 === parseInt(mm) && today.getFullYear() === parseInt(yyyy)) 
-                              ? `${String(today.getDate()).padStart(2,'0')}-${mm}-${yyyy}` 
-                              : `01-${mm}-${yyyy}`;
+                               ? `${String(today.getDate()).padStart(2,'0')}-${mm}-${yyyy}` 
+                               : `01-${mm}-${yyyy}`;
          
          if (currentlySelectedCalendarDate && currentlySelectedCalendarDate.endsWith(targetVal)) {
             defaultDateStr = currentlySelectedCalendarDate;
@@ -837,6 +837,10 @@
 
        buildingsToRender.forEach(b => {
           let bRecords = recordsToday.filter(r => r.building === b.name);
+          
+          // ---- เรียงจากชั้นล่างสุด ไปบนสุด (Natural Sort) ----
+          bRecords.sort((a, b) => a.floorZone.localeCompare(b.floorZone, undefined, { numeric: true, sensitivity: 'base' }));
+
           html += `
              <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 4px; box-shadow: var(--shadow-sm);">
                 <div style="background: var(--bg-color); padding: 12px 16px; border-bottom: 1px solid var(--border); border-radius: 12px 12px 0 0; display: flex; justify-content: space-between; align-items: center;">
@@ -927,7 +931,11 @@
       document.getElementById('summarySubtitle').innerText = `รายละเอียดคิว ประจำวันที่ ${dateStr.replace(/-/g, '/')}`;
       const body = document.getElementById('summaryBody');
       
-      const records = SERVER_RECORDS.filter(r => r.building === building && r.dateKey === dateStr);
+      let records = SERVER_RECORDS.filter(r => r.building === building && r.dateKey === dateStr);
+      
+      // ---- เรียงจากชั้นล่างสุด ไปบนสุด (Natural Sort) ----
+      records.sort((a, b) => a.floorZone.localeCompare(b.floorZone, undefined, { numeric: true, sensitivity: 'base' }));
+
       if(records.length === 0) {
         body.innerHTML = `<div class="empty-msg" style="font-size:16px;">- ไม่มีการขอใช้งาน OT Air -</div>`;
       } else {
@@ -960,9 +968,23 @@
 
     function showDetailModal(filterType, filterValue = null) {
        if(PROCESSED_RECORDS.length === 0) return alert('ไม่มีข้อมูล');
-       let filtered = PROCESSED_RECORDS;
-       if(filterType==='shared') filtered = PROCESSED_RECORDS.filter(r=>r.sharedMins>0);
-       if(filterType==='solo') filtered = PROCESSED_RECORDS.filter(r=>r.soloMins>0);
+       
+       // โคลนข้อมูลมาเพื่อไม่ให้กระทบ Array หลัก
+       let filtered = [...PROCESSED_RECORDS]; 
+       if(filterType==='shared') filtered = filtered.filter(r=>r.sharedMins>0);
+       if(filterType==='solo') filtered = filtered.filter(r=>r.soloMins>0);
+       
+       // ---- เพิ่มการจัดเรียงตามวันที่ (เก่าไปใหม่) ----
+       filtered.sort((a, b) => {
+          let [d1, m1, y1] = a.dateKey.split('-');
+          let [d2, m2, y2] = b.dateKey.split('-');
+          let dateA = new Date(y1, m1 - 1, d1).getTime();
+          let dateB = new Date(y2, m2 - 1, d2).getTime();
+          
+          if (dateA !== dateB) return dateA - dateB; // เรียงตามวันที่
+          // ถ้าวันที่เดียวกัน เรียงตามชั้นจากล่างขึ้นบน
+          return a.floorZone.localeCompare(b.floorZone, undefined, { numeric: true, sensitivity: 'base' });
+       });
        
        let html = '';
        filtered.forEach(r => {
