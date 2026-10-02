@@ -196,6 +196,204 @@
       .b-header { flex-direction: column; align-items: flex-start; }
       .b-header > div { width: 100%; display: flex; flex-direction: column; }
     }
+
+    :root { --primary:#2563eb; --primary-2:#194bd0; --radius:22px; --sidebar-width:274px; }
+    body { background:var(--bg-color); }
+    .main-content { background:radial-gradient(ellipse at 90% 0%,rgba(59,130,246,.13),transparent 44%),var(--bg-color); }
+    .sidebar { border-right:0; box-shadow:8px 0 35px rgba(18,41,87,.06); }
+    .sidebar-header { background:linear-gradient(120deg,#102452,#235be0); color:white; min-height:90px; }
+    .sidebar-header h2 { color:white; }
+    .top-nav { backdrop-filter:blur(16px); gap:16px; flex-wrap:wrap; }
+    .brand-caption { font-size:11px; letter-spacing:.16em; color:var(--muted); display:block; margin-top:4px; }
+    .hero { padding:30px; border-radius:24px; background:linear-gradient(115deg,#112650,#194bd0 65%,#3276ed); color:white; position:relative; overflow:hidden; box-shadow:0 14px 32px rgba(25,75,208,.18); }
+    .hero::after { content:""; position:absolute; right:-70px; top:-100px; width:350px; height:350px; border:50px solid rgba(255,255,255,.07); border-radius:50%; pointer-events:none; }
+    .hero h1 { font-size:clamp(24px,3vw,34px); margin:4px 0 10px; line-height:1.4; }
+    .hero p { margin:0; color:#dbeafe; max-width:760px; line-height:1.8; }
+    .hero-label { font-size:11px; letter-spacing:.2em; color:#bfdbfe; }
+    .hero-bottom { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; position:relative; z-index:1; }
+    .hero-chip { padding:7px 13px; border-radius:10px; background:rgba(255,255,255,.12); font-size:12px; }
+    .b-card,.panel,.kpi-card { box-shadow:0 5px 22px rgba(18,41,87,.05); }
+    .b-card { border-top:4px solid var(--primary-2); }
+    .b-card[data-building="BTS"] { border-top-color:#7c3aed; }
+    .kpi-card { border-radius:18px; min-height:145px; }
+    .b-filter-btn { border-radius:999px; padding:10px 16px; }
+    .b-tag-bts { color:#7c3aed; background:#ede9fe; }
+    .auth-button { max-width:260px; font-size:12px; padding:9px 13px; }
+    .auth-button span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .mobile-nav { display:none; }
+    .form-footer { display:flex; flex-wrap:wrap; gap:10px; justify-content:flex-end; background:var(--surface); padding:18px 28px; border-top:1px solid var(--border); flex-shrink:0; }
+    .form-hint { padding:14px 18px; margin-bottom:18px; border:1px solid var(--border); border-radius:14px; background:var(--primary-soft); color:var(--primary-2); font-size:13px; line-height:1.8; }
+    .date-controls { grid-column:span 12; border-bottom:1px dashed var(--border); padding:0 0 16px; margin-bottom:4px; }
+    .date-head { display:flex; gap:12px; align-items:center; flex-wrap:wrap; padding-right:65px; margin-bottom:10px; }
+    .date-head select { width:auto; min-width:180px; }
+    .date-inputs { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .date-inputs input { max-width:220px; }
+    .date-chip-list { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    .date-chip { border:1px solid var(--primary-2); border-radius:999px; background:var(--primary-soft); color:var(--primary-2); padding:6px 12px; font-size:12px; }
+    .date-selector { margin-top:12px; max-width:430px; border:1px solid var(--border); border-radius:14px; padding:12px; background:var(--surface-2); }
+    .date-selector-header { display:flex; gap:10px; align-items:center; justify-content:space-between; margin-bottom:10px; }
+    .date-selector-header input { width:180px; padding:8px; }
+    .date-selector-grid { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:5px; }
+    .date-selector-grid button { padding:8px 0; min-height:40px; font-size:12px; background:var(--surface); color:var(--text); border:1px solid var(--border); }
+    .date-selector-grid button.selected { background:var(--primary-2);color:white; }
+    .date-selector-grid span { text-align:center; font-size:11px; color:var(--muted); }
+    .row-preview { grid-column:span 12; padding:12px 16px; background:var(--surface-2); border-radius:12px; font-size:13px; line-height:1.8; }
+    .row-preview.invalid { color:var(--danger); }
+    .result-icon { font-size:46px; margin:0 0 10px; }
+    #loadingModal { z-index:12000; }
+    #operationModal { z-index:13000; }
+    #loginModal { z-index:14000; }
+    #operationModal .modal-card { width:min(540px,100%); }
+    #operationMessage { white-space:pre-line; line-height:1.9; overflow-wrap:anywhere; }
+    .operation-actions { display:flex; gap:10px; justify-content:center; margin-top:24px; flex-wrap:wrap; }
+    #loginModal .modal-card { width:min(440px,100%); }
+    #loginModal label { display:block; font-size:13px; margin:14px 0 7px; }
+    #loginModal input { width:100%;padding:13px 16px;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text); }
+    #loginError { color:var(--danger); font-size:13px; white-space:pre-line; margin-top:12px; }
+    .login-subtitle { color:var(--muted);font-size:13px;line-height:1.8; }
+    .bts-rate-note { font-size:12px;color:var(--muted);margin-top:10px; }
+    @media (min-width:601px) and (max-width:1100px) {
+      .entry-grid>div[style*="span 3"],.entry-grid>div[style*="span 4"] { grid-column:span 6!important; }
+      .container {padding:22px;}
+    }
+    @media (max-width:600px) {
+      .container {padding:14px;gap:18px; padding-bottom:100px;}
+      .hero {padding:23px 20px;border-radius:20px;}
+      .hero p {font-size:12px;}
+      .hero-bottom {gap:6px;} .hero-chip {font-size:10px;}
+      .top-nav {padding:12px 14px;gap:10px;}
+      .top-nav>div {gap:8px!important;}
+      .top-nav h2 {font-size:13px!important;max-width:200px;}
+      .brand-caption {font-size:9px;letter-spacing:.06em;}
+      .top-nav>div:last-child {width:100%;justify-content:space-between;}
+      .update-indicator {font-size:10px;padding:5px 8px;}
+      .theme-toggle {font-size:11px;padding:6px 9px;}
+      .auth-button {font-size:11px;max-width:170px;}
+      .mobile-nav {display:flex;position:fixed;bottom:0;left:0;right:0;z-index:1050;background:var(--surface);border-top:1px solid var(--border);box-shadow:0 -8px 28px rgba(18,41,87,.08);padding:8px 10px calc(8px + env(safe-area-inset-bottom));gap:8px;}
+      .mobile-nav button {flex:1;flex-direction:column;gap:3px;font-size:11px;padding:9px 4px;min-height:52px;background:var(--surface-2);color:var(--text);}
+      .mobile-nav button.active {background:var(--primary-soft);color:var(--primary-2);}
+      .mobile-nav button.mobile-add {background:var(--primary-2);color:white;}
+      .grid-kpi {gap:10px;} .kpi-card {padding:14px 10px;min-height:125px;}
+      .kpi-title {font-size:11px;} .kpi-card>div {font-size:23px!important;}
+      .b-card {padding:18px!important;} .panel {padding:16px;}
+      #reportMonth {min-width:0!important;width:100%!important;}
+      #analyticsSection>.b-card>div:first-child>div {width:100%;flex-wrap:wrap;}
+      #buildingFilterContainer {gap:6px!important;} .b-filter-btn {font-size:11px;padding:8px 11px;}
+      .panel-title {font-size:13px;flex-wrap:wrap;gap:6px;}
+      .calendar-grid {gap:4px;} .cal-day {min-height:64px;} .cal-header {font-size:11px;}
+      .modal {padding:12px;} .modal-card {width:100%!important;max-height:94dvh;border-radius:18px;}
+      #formModal {padding:0;} #formModal .modal-card {width:100%!important;height:100dvh;max-height:100dvh;border-radius:0;}
+      .modal-head {padding:16px;gap:10px;} .modal-head h3 {font-size:16px!important;}
+      .modal-body {padding:16px;} .form-footer {padding:12px 14px calc(12px + env(safe-area-inset-bottom));gap:8px;}
+      .form-footer>button {font-size:12px;padding:10px 12px;flex:1;}
+      #saveBtn {flex-basis:100%;min-height:46px;}
+      .entry-grid {gap:12px!important;}
+      .entry-grid>div[style*="span 3"],.entry-grid>div[style*="span 4"] {grid-column:span 6!important;min-width:0;}
+      .entry-grid>div[style*="span 12"] {grid-column:span 12!important;}
+      .entry-grid input,.entry-grid select {font-size:14px;padding:10px;}
+      .date-head {padding-right:50px;gap:8px;} .date-head select {min-width:0;flex:1;}
+      .date-inputs input {max-width:none;flex:1;min-width:0;}
+      .date-selector {max-width:100%;}
+      .data-table {font-size:12px;} .data-table th,.data-table td {padding:10px;}
+      .schedule-days {display:flex!important;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px;}
+      .schedule-days>div {min-width:85%;scroll-snap-align:start;}
+    }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after {transition:none!important;animation-duration:.01ms!important;} }
+
+
+    /* Balanced workspace refresh — visual layer only. */
+    :root {--sidebar-width:252px;--bg-color:#f2f6fc;--surface:#fff;--surface-2:#f6f9fe;--border:#e1e9f5;--primary-2:#255ddc;--shadow:0 16px 40px rgba(23,57,112,.09);}
+    body.dark {--bg-color:#0c1425;--surface:#172339;--surface-2:#111c30;--border:#2a3b56;--text:#f1f6ff;--muted:#a9b9d2;--primary-2:#78b1ff;--primary-soft:#16375b;--danger:#ff8e9a;--danger-soft:#48233a;--success:#53dac0;--success-soft:#123e3b;--warning:#ffd078;--warning-soft:#453b22;}
+    .main-content {background:radial-gradient(ellipse at 98% 2%,rgba(54,121,238,.12),transparent 37%),var(--bg-color);}
+    .container {max-width:1840px;padding:26px 30px 38px;gap:24px;}
+    .sidebar {box-shadow:8px 0 36px rgba(6,23,51,.07);}
+    .sidebar-header {min-height:84px;padding:22px 18px;}
+    .sidebar-header h2 {font-size:21px;}
+    .sidebar-menu {padding:24px 16px;gap:20px;}
+    .nav-menu-btn {font-size:13px;padding:14px 12px;border-radius:13px;min-height:48px;}
+    .nav-menu-btn.active {box-shadow:inset 3px 0 var(--primary-2);}
+    .sidebar-menu>.btn-primary {min-height:48px;font-size:13px;border-radius:13px;}
+    .top-nav {min-height:78px;padding:16px 30px;box-shadow:0 3px 18px rgba(13,37,77,.035);}
+    .top-nav h2 {font-size:17px!important;} .brand-caption {letter-spacing:.14em;font-size:10px;}
+    .hero {display:grid;grid-template-columns:minmax(0,1.15fr) minmax(340px,.85fr);align-items:center;min-height:244px;padding:30px 36px;background:linear-gradient(115deg,#10254d 0%,#1848ac 54%,#2973e9 100%);box-shadow:0 18px 45px rgba(25,76,166,.17);border:1px solid rgba(141,191,255,.2);}
+    .hero::after {display:none;}
+    .hero-copy {position:relative;z-index:1;}
+    .hero-label {display:flex;align-items:center;gap:8px;font-size:10px;letter-spacing:.18em;}
+    .hero-status-dot {height:6px;width:6px;display:inline-block;border-radius:50%;background:#7edbff;box-shadow:0 0 12px #7edbff;}
+    .hero h1 {font-size:clamp(26px,2.15vw,38px);line-height:1.35;margin:14px 0 12px;font-weight:600;letter-spacing:-.025em;}
+    .hero h1 span {color:#d6e9ff;}
+    .hero p {font-size:13px;line-height:1.8;max-width:620px;}
+    .hero-bottom {margin-top:18px;gap:8px;}
+    .hero-chip {font-size:11px;padding:6px 11px;border:1px solid rgba(211,232,255,.17);background:rgba(225,238,255,.08);border-radius:8px;}
+    .hero-visual {height:220px;position:relative;margin:-8px -12px -8px 20px;}
+    .air-illustration {position:absolute;width:100%;height:100%;inset:0;filter:drop-shadow(0 18px 16px rgba(5,28,66,.18));}
+    .visual-orbit {position:absolute;border:1px solid rgba(212,237,255,.14);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%);}
+    .orbit-one {width:230px;height:230px;}.orbit-two {width:300px;height:300px;border-style:dashed;}
+    .visual-badge {position:absolute;display:flex;gap:10px;align-items:center;padding:10px 14px;border-radius:14px;border:1px solid rgba(228,240,255,.24);background:rgba(17,55,125,.62);backdrop-filter:blur(10px);box-shadow:0 10px 24px rgba(6,27,64,.13);}
+    .badge-top {top:-3px;right:10px;}.badge-bottom {bottom:-3px;left:10px;}
+    .badge-icon {font-size:24px;font-weight:600;line-height:1;padding:7px;color:#e4f5ff;}
+    .visual-badge b {display:block;font-size:11px;font-weight:500;}.visual-badge small {display:block;font-size:9px;color:#c0d9fb;margin-top:3px;}
+    #analyticsSection {gap:22px!important;}
+    #analyticsSection>.b-card:first-child {border-top:0!important;border-radius:20px;padding:23px 26px!important;box-shadow:0 7px 25px rgba(24,57,107,.045);position:relative;}
+    #analyticsSection>.b-card:first-child::before {content:"";position:absolute;left:26px;right:26px;top:0;height:3px;background:linear-gradient(90deg,#3e82f4,#7caeff,transparent);border-radius:0 0 4px 4px;}
+    #analyticsSection>.b-card h2 {font-size:19px!important;}
+    #reportMonth {min-width:255px!important;font-size:13px;}
+    #buildingFilterContainer {gap:9px!important;}
+    .b-filter-btn {font-size:12px;padding:9px 14px;min-height:40px;}
+    .grid-kpi {grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;}
+    .kpi-card {position:relative;overflow:hidden;align-items:flex-start;padding:24px 22px;min-height:156px;border:1px solid var(--border);border-top-width:1px!important;box-shadow:0 7px 24px rgba(28,62,114,.045);}
+    .kpi-card::before {content:"";position:absolute;left:0;top:24px;height:48px;width:4px;border-radius:0 4px 4px 0;background:var(--primary-2);}
+    .kpi-card:nth-child(2)::before {background:var(--danger);}.kpi-card:nth-child(3)::before {background:var(--success);}.kpi-card:nth-child(4)::before {background:var(--warning);}.kpi-card:nth-child(5)::before {background:#b583f5;}
+    .kpi-card::after {content:"";width:95px;height:95px;border-radius:50%;border:16px solid rgba(78,140,230,.05);position:absolute;right:-34px;bottom:-34px;pointer-events:none;}
+    .kpi-title {font-size:12px;text-align:left;margin-bottom:12px;font-weight:500;color:var(--muted);}
+    .kpi-card>div:not(.kpi-title) {text-align:left!important;}
+    .kpi-card>div:nth-child(2) {font-size:31px!important;line-height:1.35;white-space:nowrap;}
+    .kpi-card>div:nth-child(2)>div:first-child {font-size:27px!important;line-height:1.35;}
+    .kpi-card>div:nth-child(2)>div:last-child {font-size:14px!important;margin-top:5px;}
+    .dashboard-grid {grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);gap:22px;align-items:stretch;}
+    .dashboard-grid>.panel {min-width:0;border-radius:20px;padding:24px;min-height:570px;background:var(--surface)!important;box-shadow:0 8px 30px rgba(20,52,101,.04);}
+    .panel-title {font-size:15px;line-height:1.65;min-height:34px;margin-bottom:18px;gap:10px;}
+    #dailyListTitle {flex-wrap:wrap;}
+    #dailyListTitle>span {font-size:12px;background:var(--primary-soft);padding:5px 10px;border-radius:8px;}
+    #dailyListContent {min-height:0;flex:1;max-height:490px!important;padding-right:6px!important;gap:12px!important;}
+    #dailyListContent>div {border-radius:14px!important;box-shadow:none!important;}
+    #dailyListContent>div>div:first-child {padding:14px 16px!important;}
+    #dailyListContent>div>div:first-child>b {font-size:13px!important;}
+    .calendar-grid {gap:8px;flex:1;}
+    .cal-header {font-size:12px;border-bottom:none;padding:2px 0 5px;}
+    .cal-day {min-height:78px;border-radius:11px;padding:8px;background:var(--surface-2);}
+    .cal-day.active {background:var(--surface);}
+    .cal-day.selected {border-width:1px;background:var(--primary-soft);box-shadow:inset 0 0 0 1px var(--primary-2),0 4px 10px rgba(46,99,188,.08);}
+    .cal-day.today .cal-date {color:var(--primary-2);}
+    .cal-date {font-size:13px;font-weight:500;}
+    .cal-b-tag {padding:3px 4px;font-size:10px;border-radius:5px;}
+    .schedule-days>div {border-radius:16px!important;min-height:190px;}
+    #scheduleSection>.b-card {border-top:0;border-radius:20px;position:relative;padding:24px;}
+    #scheduleSection>.b-card::before {content:"";position:absolute;left:0;top:26px;width:4px;height:28px;background:#3c83ed;border-radius:0 4px 4px 0;}
+    #scheduleSection>.b-card:nth-child(2)::before {background:#c180dc;}#scheduleSection>.b-card:nth-child(3)::before {background:#33b798;}#scheduleSection>.b-card:nth-child(4)::before {background:#9770ef;}
+    #scheduleSection .b-header {margin-bottom:18px;}
+    body.dark .hero {box-shadow:0 18px 50px rgba(0,10,31,.28);}
+    body.dark .kpi-card::after {border-color:rgba(100,164,255,.06);}
+    body.dark .b-tag-ari {background:#163e61;color:#abd7ff;}body.dark .b-tag-esv {background:#422c50;color:#e2b7f8;}body.dark .b-tag-ksl {background:#153f3c;color:#9de8d4;}body.dark .b-tag-bts {background:#352d5d;color:#cebaf8;}
+    @media(min-width:1600px){.container {padding:30px 38px 40px;gap:26px;}.hero {min-height:250px;}.dashboard-grid>.panel{min-height:620px;}#dailyListContent{max-height:540px!important;}.cal-day{min-height:87px;}.kpi-card{min-height:165px;}}
+    @media(max-width:1250px){.hero {grid-template-columns:minmax(0,1.2fr) minmax(270px,.8fr);padding:28px;}.hero-visual{margin-left:0;}.visual-badge{padding:8px 10px;}.visual-badge small{font-size:8px;}.kpi-card{padding:20px 15px;}.kpi-title{font-size:11px;}.kpi-card>div:nth-child(2){font-size:27px!important;}.dashboard-grid{gap:16px;}.dashboard-grid>.panel{padding:20px;}}
+    @media(max-width:1024px){.container{padding:22px;}.top-nav{padding:16px 22px;}.hero {grid-template-columns:minmax(0,1fr) minmax(270px,.75fr);}.hero h1{font-size:29px;}.grid-kpi{grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;}.kpi-card{grid-column:span 2;min-height:142px;}.kpi-card:nth-child(4),.kpi-card:nth-child(5){grid-column:span 3;}.dashboard-grid{grid-template-columns:1fr;}.dashboard-grid>.panel{min-height:0;}.calendar-grid{flex:auto;}.cal-day{min-height:88px;}#dailyListContent{max-height:520px!important;}}
+    @media(max-width:700px){.hero{grid-template-columns:1fr;min-height:0;padding:25px;}.hero-visual{display:none;}.hero h1{font-size:29px;margin:13px 0 12px;}.hero h1 br{display:none;}.hero h1 span{display:block;}.hero p{font-size:12px;}.hero-chip{font-size:10px;}.grid-kpi{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}.kpi-card{grid-column:auto;padding:19px 18px;min-height:135px;}.kpi-card:nth-child(4){grid-column:auto;}.kpi-card:nth-child(5){grid-column:span 2;min-height:105px;flex-direction:row;align-items:center;justify-content:space-between;}.kpi-card:nth-child(5) .kpi-title{margin-bottom:0;}.kpi-card>div:nth-child(2){font-size:26px!important;}.kpi-title{font-size:11px;}.dashboard-grid>.panel{padding:20px;}.cal-day{min-height:70px;}}
+    @media(max-width:600px){.container{padding:15px 14px 102px;gap:18px;}.top-nav{padding:12px 14px;min-height:0;}.top-nav h2{font-size:13px!important;}.brand-caption{font-size:8px;letter-spacing:.1em;}.hero{border-radius:19px;padding:23px 22px;}.hero h1{font-size:27px;}.hero-label{font-size:8px;letter-spacing:.14em;}.hero-bottom{gap:6px;margin-top:16px;}.hero-chip{padding:5px 7px;font-size:9px;}#analyticsSection{gap:16px!important;}#analyticsSection>.b-card:first-child{padding:20px 18px!important;}#analyticsSection>.b-card h2{font-size:16px!important;}#reportMonth{min-width:0!important;font-size:12px;}#buildingFilterContainer{gap:6px!important;}.b-filter-btn{font-size:10px;padding:7px 10px;min-height:34px;}.grid-kpi{gap:10px;}.kpi-card{padding:18px 15px;min-height:130px;border-radius:16px;}.kpi-card>div:nth-child(2){font-size:25px!important;}.kpi-card>div:nth-child(2)>div:first-child{font-size:24px!important;}.kpi-card>div:nth-child(2)>div:last-child{font-size:12px!important;}.kpi-title{font-size:10px;}.dashboard-grid{gap:16px;}.dashboard-grid>.panel{padding:17px;border-radius:18px;}.panel-title{font-size:13px;margin-bottom:14px;}.panel-title>span{font-size:10px!important;}.calendar-grid{gap:4px;}.cal-day{min-height:64px;border-radius:8px;padding:5px;}.cal-date{font-size:11px;}.cal-b-tag{font-size:9px;padding:2px 3px;}#dailyListContent{max-height:470px!important;}.schedule-days>div{min-height:180px;}.form-hint{font-size:12px;padding:12px 14px;}.mobile-nav{border-radius:18px 18px 0 0;}.mobile-nav button{border-radius:12px;}}
+    @media(max-width:360px){.hero h1{font-size:24px;}.hero-chip{font-size:8px;}.kpi-card{padding:16px 12px;}.kpi-card>div:nth-child(2){font-size:22px!important;}.cal-day{min-height:57px;padding:4px;}.cal-b-tag{font-size:8px;}}
+
+
+    .kpi-card>div {max-width:100%;width:100%;}
+    .kpi-card>div:nth-child(2) {letter-spacing:-.025em;}
+    .cal-day>div:last-child {display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;gap:3px!important;}
+    .cal-b-tag {font-size:9px;line-height:1.3;padding:3px 2px;}
+    @media(min-width:1025px){.dashboard-grid>.panel{height:620px;min-height:620px;}#dailyListContent{max-height:none!important;}}
+    @media(min-width:1600px){.dashboard-grid>.panel{height:660px;min-height:660px;}}
+    @media(max-width:600px){.cal-b-tag{font-size:8px;padding:2px 1px;}}
+
+    .top-nav,.container {flex-shrink:0;}
+    .kpi-card .kpi-title {font-size:12px!important;letter-spacing:normal;white-space:normal;}
+    @media(max-width:600px){.kpi-card .kpi-title {font-size:10px!important;}}
   </style>
 </head>
 
@@ -240,17 +438,44 @@
       <header class="top-nav">
         <div style="display: flex; align-items: center; gap: 16px;">
           <button class="btn-secondary" style="padding: 8px 12px; border: none; background: var(--surface-2);" onclick="toggleSidebar()">☰</button>
-          <h2 style="margin: 0; font-size: 18px; font-weight: 700; color: var(--text);">ระบบแผนเปิดเครื่องปรับอากาศ นอกเวลาทำการ</h2>
+          <div><h2 style="margin:0;font-size:18px;font-weight:700;">ระบบแผนเปิดแอร์นอกเวลาทำการ</h2><span class="brand-caption">OPS–BSCS · AIR CONDITIONING SERVICE</span></div>
         </div>
         <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
           <button class="theme-toggle" onclick="toggleTheme()" type="button">
-            <span id="themeIconWrap">☀️</span> โหมดกลางวัน
+            <span id="themeIconWrap">☀️</span> <span id="themeText">โหมดกลางวัน</span>
           </button>
+          <button class="btn-secondary auth-button" id="authButton" onclick="handleAuthButton()"><span id="authLabel">🔐 เข้าสู่ระบบ</span></button>
           <div class="update-indicator" id="loadingStatus"><span class="dot"></span> <span id="statusText">กำลังซิงค์...</span></div>
         </div>
       </header>
 
       <div class="container">
+        <section class="hero">
+          <div class="hero-copy"><div class="hero-label"><span class="hero-status-dot"></span> NTL · OT AIR MANAGEMENT</div>
+          <h1>วางแผนเปิดแอร์<br><span>ดูแลทุกพื้นที่อย่างลงตัว</span></h1>
+          <p>จัดการตารางใช้งาน ติดตามค่าใช้จ่าย และบันทึกคิวหลายวันได้ในที่เดียว</p>
+          <div class="hero-bottom"><span class="hero-chip">ขั้นต่ำ 1 ชั่วโมง</span><span class="hero-chip">คิดต่อครั้งละ 30 นาที</span><span class="hero-chip">บันทึกได้หลายวัน</span></div></div>
+          <div class="hero-visual" aria-hidden="true">
+            <div class="visual-orbit orbit-one"></div><div class="visual-orbit orbit-two"></div>
+            <svg class="air-illustration" viewBox="0 0 480 230" fill="none">
+              <defs><linearGradient id="glassAir" x1="115" y1="40" x2="360" y2="200" gradientUnits="userSpaceOnUse"><stop stop-color="#FFFFFF" stop-opacity=".95"/><stop offset="1" stop-color="#D8ECFF" stop-opacity=".72"/></linearGradient><linearGradient id="towerAir" x1="250" y1="70" x2="400" y2="200" gradientUnits="userSpaceOnUse"><stop stop-color="#71B7FF" stop-opacity=".5"/><stop offset="1" stop-color="#C9E9FF" stop-opacity=".14"/></linearGradient></defs>
+              <path d="M20 195H460" stroke="#BFDBFE" stroke-opacity=".24"/>
+              <path d="M290 65L355 38L407 68V195H290V65Z" fill="url(#towerAir)" stroke="#D3E9FF" stroke-opacity=".5"/>
+              <path d="M355 39V195M312 80L335 70M312 105L335 95M312 130L335 120M312 155L335 145M375 83H389M375 108H389M375 133H389M375 158H389" stroke="#D3E9FF" stroke-opacity=".5" stroke-width="5"/>
+              <path d="M224 105L266 87L289 102V195H224V105Z" fill="#82C5FF" fill-opacity=".16" stroke="#D3E9FF" stroke-opacity=".35"/>
+              <rect x="65" y="63" width="247" height="83" rx="20" fill="url(#glassAir)"/>
+              <path d="M85 119H294" stroke="#375F9C" stroke-opacity=".45" stroke-width="3"/>
+              <path d="M88 128H291" stroke="#375F9C" stroke-opacity=".2" stroke-width="3"/>
+              <path d="M91 98H225" stroke="#95B2D6" stroke-width="4" stroke-linecap="round"/>
+              <circle cx="283" cy="88" r="4" fill="#18BDA6"/>
+              <path d="M104 158C97 171 101 176 111 182M153 158C146 171 150 181 160 187M202 158C195 171 199 176 209 182" stroke="#D7F1FF" stroke-width="4" stroke-linecap="round"/>
+              <circle cx="76" cy="44" r="5" fill="#A5E6FF" fill-opacity=".75"/><circle cx="433" cy="111" r="4" fill="#A5E6FF" fill-opacity=".75"/>
+              <path d="M428 42V60M419 51H437" stroke="#D7F1FF" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <div class="visual-badge badge-top"><span class="badge-icon">4</span><div><b>อาคารสำนักงาน</b><small>Ari Hills · ESV · KSL · BTSVP</small></div></div>
+            <div class="visual-badge badge-bottom"><span class="badge-icon">60</span><div><b>โซนที่พร้อมให้บริการ</b><small>วางแผนและติดตามการใช้งาน</small></div></div>
+          </div>
+        </section>
         
         <div style="display: none; flex-direction: column; gap: 24px;" id="analyticsSection">
           
@@ -277,6 +502,7 @@
                 <button class="b-filter-btn" onclick="setBuildingFilter('Ari Hills')">📍 Ari Hills</button>
                 <button class="b-filter-btn" onclick="setBuildingFilter('ESV Tower')">📍 ESV Tower</button>
                 <button class="b-filter-btn" onclick="setBuildingFilter('KSL Tower')">📍 KSL Tower</button>
+                <button class="b-filter-btn" onclick="setBuildingFilter('BTS Visionary Park')">📍 BTS Visionary Park</button>
             </div>
 
           </div>
@@ -329,7 +555,7 @@
   <div class="modal" id="loadingModal">
     <div class="modal-card" style="width: auto; padding: 40px; text-align: center;">
       <div class="pro-spinner"></div>
-      <h3 style="margin: 0; font-size: 18px; font-weight: 700;">กำลังสื่อสารกับฐานข้อมูล...</h3>
+      <h3 id="loadingTitle" style="margin:0;font-size:18px;">กำลังโหลดข้อมูล...</h3>
     </div>
   </div>
 
@@ -340,12 +566,13 @@
         <button class="btn-secondary" style="padding: 6px 12px;" onclick="closeModal('formModal')">ปิด ✕</button>
       </div>
       <div class="modal-body" style="padding-bottom: 0;">
+        <div class="form-hint">เลือกวัน อาคาร และโซน แล้วกำหนดเวลาเปิดแอร์ขั้นต่ำ 1 ชั่วโมง เพิ่มเวลาได้ครั้งละ 30 นาที<br>คิววันเดียวกัน อาคารและโซนเดียวกันจะรวมเป็นช่วงเวลาเดียวตามกติกาเดิม</div>
         <div id="editAlertMsg" style="display: none; background: var(--warning-soft); color: var(--warning); padding: 12px 16px; border-radius: 10px; margin-bottom: 20px; font-weight: 600;">
           ⚠️ โหมดแก้ไขข้อมูลเดิม (บันทึกเพื่ออัปเดตข้อมูล)
         </div>
         <div class="entry-list" id="entryList" style="display: flex; flex-direction: column; gap: 20px;"></div>
       </div>
-      <div style="padding: 20px 28px; background: var(--surface); border-top: 1px solid var(--border); display: flex; gap: 12px; justify-content: flex-end; flex-shrink: 0;">
+      <div class="form-footer">
         <button class="btn-success" type="button" onclick="addEntryRow(true)" id="btnCopyRow">✨ คัดลอกแถวบน</button>
         <button class="btn-secondary" type="button" onclick="addEntryRow(false)" id="btnAddRow">+ เพิ่มแถวใหม่</button>
         <button class="btn-primary" id="saveBtn" type="button" onclick="saveEntries()">💾 บันทึกเข้าระบบ</button>
@@ -421,6 +648,33 @@
     </div>
   </div>
 
+
+  <nav class="mobile-nav" aria-label="เมนูหลัก">
+    <button id="mobileSchedule" class="active" onclick="mobileSwitchTab('schedule')">📅<span>ตารางเปิดแอร์</span></button>
+    <button class="mobile-add" onclick="openFormModalForAdd()">＋<span>บันทึกคิว</span></button>
+    <button id="mobileAnalytics" onclick="mobileSwitchTab('analytics')">📊<span>ภาพรวม</span></button>
+  </nav>
+  <div class="modal" id="loginModal" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+    <div class="modal-card">
+      <div class="modal-head"><h3 id="loginTitle" style="margin:0">🔐 เข้าสู่ระบบ</h3><button class="btn-secondary" onclick="cancelLogin()">ปิด ✕</button></div>
+      <div class="modal-body">
+        <p class="login-subtitle">ดูข้อมูลได้โดยไม่ต้องเข้าสู่ระบบ<br>เข้าสู่ระบบเพื่อเพิ่ม แก้ไข หรือลบรายการ</p>
+        <form id="loginForm" onsubmit="submitLogin(event)">
+          <label for="loginUsername">ชื่อผู้ใช้</label><input id="loginUsername" autocomplete="username" required maxlength="100">
+          <label for="loginPassword">รหัสผ่าน</label><input type="password" id="loginPassword" autocomplete="current-password" required maxlength="200">
+          <div id="loginError" role="alert"></div>
+          <button type="submit" id="loginSubmit" class="btn-primary" style="width:100%;margin-top:22px">เข้าสู่ระบบ</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="modal" id="operationModal" role="dialog" aria-modal="true" aria-labelledby="operationTitle" aria-live="polite">
+    <div class="modal-card"><div class="modal-body" style="text-align:center;padding:30px">
+      <div id="operationIcon" class="result-icon"></div><h3 id="operationTitle" style="margin:0 0 12px"></h3>
+      <div id="operationMessage"></div><div id="operationActions" class="operation-actions"></div>
+    </div></div>
+  </div>
+
   <script>
     // 👇👇👇 วางลิงก์ Web App (API URL) ของ Google Apps Script ตรงนี้ครับ 👇👇👇
     const API_URL = "https://script.google.com/macros/s/AKfycbw-CQGyhcjs7SXxMWZDlAYhF7uyWihwXqXEuxQAMyBYyfCTwbtE2-rMeBnbbfr0q_Y/exec"; 
@@ -434,6 +688,7 @@
         { name: "Ari Hills (สำนักงานใหญ่)", zones: ["9 Zone 1", "9 Zone 2", "9 Zone 3", "9 Zone 4", "10 Zone 1", "10 Zone 2", "10 Zone 3", "10 Zone 4", "11 Zone 1", "11 Zone 2", "11 Zone 3", "11 Zone 4", "12 Zone 1", "12 Zone 2", "12 Zone 3", "12 Zone 4", "12A Zone 1", "12A Zone 2", "12A Zone 3", "12A Zone 4", "14 Zone 1", "14 Zone 2", "14 Zone 3", "14 Zone 4", "15 Zone 1", "15 Zone 2", "15 Zone 3", "15 Zone 4", "16 Zone 1", "16 Zone 2", "16 Zone 3", "16 Zone 4"] },
         { name: "ESV Tower", zones: ["14 Zone 1", "14 Zone 2"] },
         { name: "KSL Tower", zones: ["11 Zone 1", "11 Zone 2", "12 Zone 1", "12 Zone 2", "14 Zone 1", "14 Zone 2", "15 Zone 1", "15 Zone 2"] }
+        ,{ name: "BTS Visionary Park", zones: Array.from({length:9},(_,i)=>[`${21+i} Zone AHU#1`,`${21+i} Zone AHU#2`]).flat() }
       ]
     };
 
@@ -486,7 +741,7 @@
       }
     }
 
-    function updateThemeUI(isDark) { document.getElementById('themeIconWrap').innerHTML = isDark ? '🌙' : '☀️'; }
+    function updateThemeUI(isDark) { document.getElementById('themeIconWrap').innerHTML = isDark ? '🌙' : '☀️'; document.getElementById('themeText').textContent=isDark?'โหมดกลางคืน':'โหมดกลางวัน'; }
 
     function showToast(message) {
       const toast = document.getElementById('toastMsg');
@@ -514,9 +769,11 @@
       if (isManualTrigger) openModal('loadingModal');
       document.getElementById('statusText').innerText = "กำลังซิงค์...";
       
-      fetch(`${API_URL}?action=getData`)
+      const refreshId=++refreshSequence;
+      return fetchWithTimeout(`${API_URL}?action=getData`,{},25000)
         .then(response => response.json())
         .then(result => {
+          if(refreshId !== refreshSequence) return;
           if (result.status === 'success') {
             SERVER_RECORDS = result.data || [];
             updateMonthSelector(); 
@@ -532,14 +789,14 @@
           document.getElementById('statusText').innerText = "ออฟไลน์";
         })
         .finally(() => {
-          if (isManualTrigger) setTimeout(() => closeModal('loadingModal'), 400);
+          if (isManualTrigger && !operationBusy) closeModal('loadingModal');
         });
     }
 
     function startAutoRefresh() {
       clearInterval(autoRefreshTimer);
       autoRefreshTimer = setInterval(() => {
-        if (!document.querySelector('.modal.show')) refreshAll(false); 
+        if (!operationBusy && !document.querySelector('.modal.show')) refreshAll(false); 
       }, 15000); 
     }
 
@@ -588,6 +845,9 @@
                 if (r.building.includes("Ari Hills")) {
                     if(isSolo) { r.soloMins += 30; r.soloCost += 500; } 
                     else { r.sharedMins += 30; r.sharedCost += 250; }
+                } else if (r.building.includes("BTS Visionary Park")) {
+                    if(isSolo) { r.soloMins += 30; r.soloCost += 800; }
+                    else { r.sharedMins += 30; r.sharedCost += 800; }
                 } else if (r.building.includes("KSL Tower")) {
                     // 1625.20 บาท/ชั่วโมง (812.60 บาท/ครึ่งชั่วโมง)
                     if(isSolo) { r.soloMins += 30; r.soloCost += 812.6; } 
@@ -658,7 +918,13 @@
 
     function calculateAndRenderDashboard() {
       const selVal = document.getElementById('reportMonth').value;
-      if(!selVal || selVal === 'none') return;
+      if(!selVal || selVal === 'none') {
+        PROCESSED_RECORDS=[];
+        ['statTotalHours','statTotalCost','statSharedHours','statSharedCost','statSoloHours','statSoloCost','statTotalTickets'].forEach(id=>document.getElementById(id).innerText='0');
+        document.getElementById('panelLeft').innerHTML='<div class="empty-msg">ยังไม่มีข้อมูลการเปิดแอร์</div>';
+        document.getElementById('panelRight').innerHTML='<div class="empty-msg">เริ่มบันทึกคิวเพื่อดูภาพรวม</div>';
+        return;
+      }
 
       const mode = selVal.startsWith('Y-') ? 'year' : 'month';
       const targetVal = selVal.substring(2);
@@ -721,7 +987,7 @@
                topHtml += `
                  <div>
                    <div style="display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 6px; font-weight:600;">
-                     <span>${i+1}. ${z[0]}</span><span style="color:var(--primary-2);">${(z[1]/60).toFixed(1)} ชม.</span>
+                     <span>${i+1}. ${escapeHtml(z[0])}</span><span style="color:var(--primary-2);">${(z[1]/60).toFixed(1)} ชม.</span>
                    </div>
                    <div style="width: 100%; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden;">
                      <div style="width: ${pct}%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-2)); border-radius: 4px;"></div>
@@ -803,7 +1069,7 @@
 
           let bTags = [...new Set(dayRecords.map(r => r.building))].map(b => {
               let short = b.split(' ')[0];
-              return `<div class="cal-b-tag ${b.includes('Ari')?'b-tag-ari':b.includes('ESV')?'b-tag-esv':'b-tag-ksl'}">${short}</div>`;
+              return `<div class="cal-b-tag ${b.includes('Ari')?'b-tag-ari':b.includes('ESV')?'b-tag-esv':b.includes('BTS')?'b-tag-bts':'b-tag-ksl'}">${short}</div>`;
           }).join('');
 
           html += `<div class="${classes.join(' ')}" id="calDay-${dStr}" onclick="selectDateOnCalendar('${dStr}')">
@@ -855,16 +1121,16 @@
           } else {
              bRecords.forEach(r => {
                 let dur = calculateDuration(r.startTime, r.stopTime);
-                let payload = encodeURIComponent(JSON.stringify(r));
+                let payload = encodeURIComponent(JSON.stringify(r)).replace(/'/g, "%27");
                 html += `
                   <div style="border-left: 3px solid var(--primary-2); padding: 12px; background: var(--surface-2); border-radius: 8px; border-right: 1px solid var(--border); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); cursor:pointer;" onclick="openFormModalForEdit('${payload}')" title="คลิกเพื่อแก้ไข">
                      <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                        <b style="color:var(--text); font-size:14px;">📍 ${r.floorZone}</b>
+                        <b style="color:var(--text); font-size:14px;">📍 ${escapeHtml(r.floorZone)}</b>
                         <span style="font-size:13px; font-weight:700; color:var(--primary-2);">⏱️ ${r.startTime}-${r.stopTime}</span>
                      </div>
                      <div style="display:flex; flex-wrap:wrap; gap:8px; font-size:13px; align-items:center; color:var(--muted);">
-                        <span style="background:var(--tag-1); color:var(--tag-1-text); padding:2px 8px; border-radius:4px;">${r.department || 'ไม่ระบุ'}</span>
-                        <span style="background:var(--surface); border:1px solid var(--border); padding:2px 8px; border-radius:4px;">CC: ${r.costCenter || '-'}</span>
+                        <span style="background:var(--tag-1); color:var(--tag-1-text); padding:2px 8px; border-radius:4px;">${escapeHtml(r.department || 'ไม่ระบุ')}</span>
+                        <span style="background:var(--surface); border:1px solid var(--border); padding:2px 8px; border-radius:4px;">CC: ${escapeHtml(r.costCenter || '-')}</span>
                         <span style="font-weight:700; color:var(--danger);">฿${r.totalCost.toLocaleString('th-TH', {minimumFractionDigits:0, maximumFractionDigits:2})}</span>
                         <span style="margin-left:auto; font-weight:600;">⏳ ${dur}</span>
                      </div>
@@ -899,7 +1165,7 @@
 
       let newHtml = '';
       CONFIG.buildings.forEach(b => {
-        newHtml += `<div class="b-card"><div class="b-header"><h2 style="font-size:18px;">🏢 ${b.name}</h2></div><div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">`;
+        newHtml += `<div class="b-card"><div class="b-header"><h2 style="font-size:18px;">🏢 ${b.name}</h2></div><div class="schedule-days" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">`;
         dateArray.forEach((dStr, idx) => {
           let isToday = (idx === 0);
           let dayRecords = SERVER_RECORDS.filter(r => r.building === b.name && r.dateKey === dStr);
@@ -913,7 +1179,7 @@
           else {
             dayRecords.slice(0, 2).forEach(r => {
               newHtml += `<div style="background:var(--surface); border:1px solid var(--border); border-left:4px solid var(--primary-2); border-radius:8px; padding:10px; margin-bottom:8px; font-size:13px;">
-                  <b style="color:var(--text); display:block; margin-bottom:4px;">📍 ${r.floorZone}</b>
+                  <b style="color:var(--text); display:block; margin-bottom:4px;">📍 ${escapeHtml(r.floorZone)}</b>
                   <span style="color:var(--primary-2); font-weight:600; background:var(--bg-color); padding:2px 6px; border-radius:4px;">⏱️ ${r.startTime}-${r.stopTime}</span>
                 </div>`;
             });
@@ -941,15 +1207,15 @@
       } else {
         let html = '<div style="display:flex; flex-direction:column; gap:12px;">';
         records.forEach(r => {
-          let payload = encodeURIComponent(JSON.stringify(r));
+          let payload = encodeURIComponent(JSON.stringify(r)).replace(/'/g, "%27");
           html += `
             <div style="background: var(--surface); padding: 16px; border-radius: 12px; border: 1px solid var(--border); border-left: 5px solid var(--primary-2); display:flex; justify-content:space-between; flex-wrap:wrap; gap:16px;">
                 <div>
-                  <h4 style="margin: 0 0 8px; color: var(--text); font-size: 16px;">📍 ${r.floorZone}</h4>
+                  <h4 style="margin: 0 0 8px; color: var(--text); font-size: 16px;">📍 ${escapeHtml(r.floorZone)}</h4>
                   <div style="font-size: 13px; color: var(--muted); display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                    <span style="background:var(--tag-1); color:var(--tag-1-text); padding:2px 8px; border-radius:6px; font-weight:600;">${r.department || '-'}</span>
-                    <span style="border:1px solid var(--border); padding:2px 8px; border-radius:6px;">CC: ${r.costCenter||'-'}</span>
-                    <span>${r.remark ? '💬 '+r.remark : ''}</span>
+                    <span style="background:var(--tag-1); color:var(--tag-1-text); padding:2px 8px; border-radius:6px; font-weight:600;">${escapeHtml(r.department || '-')}</span>
+                    <span style="border:1px solid var(--border); padding:2px 8px; border-radius:6px;">CC: ${escapeHtml(r.costCenter || '-')}</span>
+                    <span>${r.remark ? '💬 '+escapeHtml(r.remark) : ''}</span>
                   </div>
                 </div>
                 <div style="text-align: right;">
@@ -988,11 +1254,11 @@
        
        let html = '';
        filtered.forEach(r => {
-          let payload = encodeURIComponent(JSON.stringify(r));
+          let payload = encodeURIComponent(JSON.stringify(r)).replace(/'/g, "%27");
           html += `<tr>
             <td>${r.dateKey.replace(/-/g,'/')}</td>
-            <td><b>${r.floorZone}</b><br><span style="font-size:12px; color:var(--muted);">${r.building}</span></td>
-            <td><b style="color:var(--primary-2);">${r.department||'-'}</b><br><span style="font-size:12px; color:var(--muted);">CC: ${r.costCenter||'-'}</span></td>
+            <td><b>${escapeHtml(r.floorZone)}</b><br><span style="font-size:12px; color:var(--muted);">${escapeHtml(r.building)}</span></td>
+            <td><b style="color:var(--primary-2);">${escapeHtml(r.department || '-')}</b><br><span style="font-size:12px; color:var(--muted);">CC: ${escapeHtml(r.costCenter || '-')}</span></td>
             <td>${r.startTime}-${r.stopTime}</td>
             <td>${r.soloMins>0 && r.sharedMins>0 ? 'ผสม' : r.soloMins>0 ? 'เหมา' : 'ตรม.'}</td>
             <td style="text-align:right; color:var(--danger); font-weight:700;">฿${r.totalCost.toLocaleString('th-TH', {minimumFractionDigits:0, maximumFractionDigits:2})}</td>
@@ -1008,7 +1274,7 @@
     }
 
     // ============================ Edit / Delete / Form Logic ============================
-    function openFormModalForAdd() {
+    function openFormModalForAddOriginal() {
       editingOldRecord = null; entryRows = [];
       document.getElementById('formTitleText').innerHTML = '<span>📝</span> บันทึกคิวเปิดแอร์ใหม่';
       document.getElementById('saveBtn').innerHTML = '💾 บันทึกเข้าระบบ';
@@ -1020,7 +1286,7 @@
       if (window.innerWidth <= 1024) toggleSidebar(); 
     }
 
-    function openFormModalForEdit(recordStr) {
+    function openFormModalForEditOriginal(recordStr) {
       let r = JSON.parse(decodeURIComponent(recordStr));
       editingOldRecord = r; 
       let p = r.dateKey.split('-');
@@ -1036,20 +1302,12 @@
       openModal('formModal');
     }
 
-    function deleteRecord(recordStr) {
-      if(!confirm('🚨 ยืนยันการลบรายการนี้?\nลบแล้วจะไม่สามารถกู้คืนได้')) return;
-      let r = JSON.parse(decodeURIComponent(recordStr));
-      closeModal('summaryModal'); closeModal('detailModal'); openModal('loadingModal');
-      fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'manage', inserts: [], updates: [], deletes: [r] }) })
-      .then(r => r.json()).then(res => {
-         if(res.status === 'success') { showToast("ลบสำเร็จ"); refreshAll(true); } 
-         else { alert("Error: " + res.message); closeModal('loadingModal'); }
-      }).catch(err => { alert('เชื่อมต่อเซิร์ฟเวอร์ไม่ได้'); closeModal('loadingModal'); });
-    }
+    // Authenticated deleteRecord is defined in the v2 extension below.
 
     function addEntryRow(clone) {
-      let row = { date: document.getElementById('selectedDate').value || toIsoDate(new Date()), building: CONFIG.buildings[0].name, floorZone: CONFIG.buildings[0].zones[0], department: '', costCenter: '', startTime: '18:00', stopTime: '20:00', remark: '' };
+      let row = { date: document.getElementById('selectedDate').value || toIsoDate(new Date()), building: CONFIG.buildings[0].name, floorZone: CONFIG.buildings[0].zones[0], department: '', costCenter: '', startTime: '18:00', stopTime: '19:00', remark: '' };
       if (clone && entryRows.length) row = JSON.parse(JSON.stringify(entryRows[entryRows.length - 1]));
+      row.dateMode=row.dateMode || 'single'; row.dates=row.dates || []; row.dateStart=row.dateStart || row.date; row.dateEnd=row.dateEnd || row.date;
       entryRows.push(row); renderEntryRows();
     }
     
@@ -1072,6 +1330,8 @@
       let parts = (entryRows[i][field] || '18:00').split(':');
       if(type === 'h') parts[0] = val; if(type === 'm') parts[1] = val;
       entryRows[i][field] = parts.join(':');
+      if(field==='startTime') entryRows[i].stopTime=minsToTime((timeToMins(entryRows[i].startTime)+60)%1440);
+      renderEntryRows();
     }
 
     function renderEntryRows() {
@@ -1081,62 +1341,24 @@
         return `
           <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; position:relative;">
             ${editingOldRecord?'':`<button class="btn-danger" style="position:absolute; top:16px; right:16px; padding:4px 10px; font-size:12px;" onclick="removeEntryRow(${i})">ลบ</button>`}
-            <div style="display:grid; grid-template-columns: repeat(12, 1fr); gap:16px;">
-              <div style="grid-column: span 4;"><label style="font-size:13px; color:var(--muted); font-weight:600;">📅 วันที่</label><input type="date" value="${row.date}" onchange="entryRows[${i}].date=this.value"></div>
-              <div style="grid-column: span 4;"><label style="font-size:13px; color:var(--muted); font-weight:600;">🏢 อาคาร</label><select onchange="entryRows[${i}].building=this.value; entryRows[${i}].floorZone=CONFIG.buildings.find(x=>x.name===this.value).zones[0]; renderEntryRows();">${bOpts}</select></div>
+            <div class="entry-grid" style="display:grid; grid-template-columns: repeat(12, 1fr); gap:16px;">
+              ${renderDateControls(row,i)}
+              <div style="grid-column: span 4;"><label style="font-size:13px; color:var(--muted); font-weight:600;">🏢 อาคาร</label><select onchange="changeEntryBuilding(${i},this.value);">${bOpts}</select></div>
               <div style="grid-column: span 4;"><label style="font-size:13px; color:var(--muted); font-weight:600;">📍 โซน / ชั้น</label><select onchange="entryRows[${i}].floorZone=this.value">${zOpts}</select></div>
               
               <div style="grid-column: span 3;"><label style="font-size:13px; color:var(--muted); font-weight:600;">เริ่ม (ชม:นาที)</label>${buildTimePicker(i, 'startTime', row.startTime)}</div>
               <div style="grid-column: span 3;"><label style="font-size:13px; color:var(--muted); font-weight:600;">สิ้นสุด (ชม:นาที)</label>${buildTimePicker(i, 'stopTime', row.stopTime)}</div>
               
-              <div style="grid-column: span 3;"><label style="font-size:13px; color:var(--muted); font-weight:600;">👥 ฝ่าย</label><input type="text" value="${row.department}" placeholder="HR, IT" onchange="entryRows[${i}].department=this.value"></div>
-              <div style="grid-column: span 3;"><label style="font-size:13px; color:var(--muted); font-weight:600;">💰 Cost Center</label><input type="text" value="${row.costCenter}" placeholder="12345" onchange="entryRows[${i}].costCenter=this.value"></div>
-              <div style="grid-column: span 12;"><label style="font-size:13px; color:var(--muted); font-weight:600;">💬 หมายเหตุ</label><input type="text" value="${row.remark}" onchange="entryRows[${i}].remark=this.value"></div>
+              <div style="grid-column: span 3;"><label style="font-size:13px; color:var(--muted); font-weight:600;">👥 ฝ่าย</label><input type="text" value="${escapeHtml(row.department)}" placeholder="HR, IT" onchange="entryRows[${i}].department=this.value"></div>
+              <div style="grid-column: span 3;"><label style="font-size:13px; color:var(--muted); font-weight:600;">💰 Cost Center</label><input type="text" value="${escapeHtml(row.costCenter)}" placeholder="12345" onchange="entryRows[${i}].costCenter=this.value"></div>
+              <div style="grid-column: span 12;"><label style="font-size:13px; color:var(--muted); font-weight:600;">💬 หมายเหตุ</label><input type="text" value="${escapeHtml(row.remark)}" onchange="entryRows[${i}].remark=this.value"></div>
             </div>
           </div>`;
       }).join('');
+      renderEntryPreviews();
     }
 
-    function saveEntries() {
-      let mergedMap = {};
-      entryRows.forEach(row => {
-        let p = row.date.split('-'); let fd = (p[0].length === 4) ? `${p[2]}-${p[1]}-${p[0]}` : row.date; 
-        let key = `${fd}|${row.building}|${row.floorZone}`;
-        if (!mergedMap[key]) mergedMap[key] = { ...row, date: fd };
-        else {
-          let eSt = timeToMins(mergedMap[key].startTime), eSp = timeToMins(mergedMap[key].stopTime);
-          let nSt = timeToMins(row.startTime), nSp = timeToMins(row.stopTime);
-          if (eSp <= eSt) eSp += 24*60; if (nSp <= nSt) nSp += 24*60;
-          mergedMap[key].startTime = minsToTime(Math.min(eSt, nSt) % (24*60));
-          mergedMap[key].stopTime = minsToTime(Math.max(eSp, nSp) % (24*60));
-          mergedMap[key].department = [...new Set([...(mergedMap[key].department?mergedMap[key].department.split(','):[]), ...(row.department?row.department.split(','):[])])].join(',');
-          mergedMap[key].costCenter = [...new Set([...(mergedMap[key].costCenter?mergedMap[key].costCenter.split(','):[]), ...(row.costCenter?row.costCenter.split(','):[])])].join(',');
-          mergedMap[key].remark = [...new Set([...(mergedMap[key].remark?mergedMap[key].remark.split('|'):[]), ...(row.remark?row.remark.split('|'):[])])].join('|');
-        }
-      });
-
-      let pData = Object.values(mergedMap), inserts = [], updates = [];
-      if (editingOldRecord) updates.push({ oldData: editingOldRecord, newData: pData[0] });
-      else {
-         pData.forEach(newR => {
-            let ex = SERVER_RECORDS.find(r => r.dateKey === newR.date && r.building === newR.building && r.floorZone === newR.floorZone);
-            if (ex) {
-               let eSt = timeToMins(ex.startTime), eSp = timeToMins(ex.stopTime), nSt = timeToMins(newR.startTime), nSp = timeToMins(newR.stopTime);
-               if (eSp <= eSt) eSp += 24*60; if (nSp <= nSt) nSp += 24*60;
-               let mRow = { ...ex };
-               mRow.startTime = minsToTime(Math.min(eSt, nSt) % (24*60)); mRow.stopTime = minsToTime(Math.max(eSp, nSp) % (24*60));
-               updates.push({ oldData: ex, newData: mRow });
-            } else inserts.push(newR);
-         });
-      }
-
-      closeModal('formModal'); openModal('loadingModal');
-      fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'manage', inserts: inserts, updates: updates, deletes: [] }) })
-      .then(r => r.json()).then(res => {
-        if (res.status === 'success') { showToast("บันทึกสำเร็จ!"); refreshAll(true); } 
-        else { closeModal('loadingModal'); alert('Error: ' + res.message); }
-      }).catch(err => { closeModal('loadingModal'); alert('API Error'); });
-    }
+    // Authenticated saveEntries is defined in the v2 extension below.
 
     function openModal(id) { document.getElementById(id).classList.add('show'); }
     function closeModal(id) { document.getElementById(id).classList.remove('show'); }
@@ -1246,6 +1468,278 @@
       closeModal('exportModal');
       showToast('ดาวน์โหลดไฟล์ Excel สำเร็จ!');
     }
+    // ============================ OT Air v2 extension ============================
+    let refreshSequence=0, operationBusy=false, operationAction=null, pendingAuthAction=null;
+    let authState=null;
+    try { authState=JSON.parse(sessionStorage.getItem('otair-session') || 'null'); } catch (_) {}
+    function escapeHtml(value) {return String(value ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+    function isLoggedIn() {return authState && authState.token && authState.user && authState.user.expiresAt>Date.now();}
+    function clearAuth() {authState=null;sessionStorage.removeItem('otair-session');updateAuthUI();}
+    function updateAuthUI() {
+      if(authState && !isLoggedIn()) {authState=null;sessionStorage.removeItem('otair-session');}
+      document.getElementById('authLabel').textContent=isLoggedIn()?'👤 '+authState.user.displayName+' · ออกจากระบบ':'🔐 เข้าสู่ระบบ';
+    }
+    async function fetchWithTimeout(url,options={},ms=45000) {
+      const controller=new AbortController(), timer=setTimeout(()=>controller.abort(),ms);
+      try {const res=await fetch(url,{...options,signal:controller.signal});if(!res.ok)throw new Error('เซิร์ฟเวอร์ตอบกลับ HTTP '+res.status);return res;}
+      finally {clearTimeout(timer);}
+    }
+    async function apiPost(payload) {
+      let response;
+      try {response=await fetchWithTimeout(API_URL,{method:'POST',body:JSON.stringify(payload)},60000);}
+      catch(err) {
+        if(['manage','save'].includes(payload.action)) throw new Error('ยังยืนยันผลการบันทึกไม่ได้ อาจมีการบันทึกแล้ว\nกรุณาโหลดข้อมูลตรวจสอบก่อนทำรายการซ้ำ');
+        throw new Error(err.name==='AbortError'?'การเชื่อมต่อหมดเวลา กรุณาลองใหม่':'เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ กรุณาตรวจสอบอินเทอร์เน็ต');
+      }
+      let result;
+      try {result=await response.json();} catch(_) {throw new Error('เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง กรุณาตรวจสอบข้อมูลก่อนทำรายการซ้ำ');}
+      if(payload.action==='login' && result.status==='success' && (!result.token || !result.user || !result.user.username || !Number.isFinite(result.user.expiresAt))) throw new Error('API ยังไม่รองรับ Login กรุณาอัปเดต Code.gs และ Deploy เป็น New version');
+      if(payload.action==='login' && result.status!=='success' && /action/i.test(result.message || '')) throw new Error('API ยังเป็นเวอร์ชันเก่า กรุณาอัปเดต Code.gs และ Deploy เป็น New version โดยใช้ URL /exec เดิม');
+      if(result.status!=='success') {const err=new Error(result.message || 'ดำเนินการไม่สำเร็จ');err.code=result.code;if(err.code==='AUTH_REQUIRED')clearAuth();throw err;}
+      return result;
+    }
+    function needAuth(action) {
+      updateAuthUI();
+      if(isLoggedIn()) {action();return;}
+      pendingAuthAction=action;
+      document.getElementById('loginError').textContent='';
+      document.getElementById('loginPassword').value='';
+      openModal('loginModal');
+      setTimeout(()=>document.getElementById('loginUsername').focus(),100);
+    }
+    function openFormModalForAdd() {needAuth(()=>openFormModalForAddOriginal());}
+    function openFormModalForEdit(recordStr) {needAuth(()=>openFormModalForEditOriginal(recordStr));}
+    function cancelLogin() {pendingAuthAction=null;document.getElementById('loginPassword').value='';closeModal('loginModal');}
+    async function submitLogin(event) {
+      event.preventDefault();
+      const button=document.getElementById('loginSubmit');if(button.disabled)return;
+      button.disabled=true;button.textContent='กำลังตรวจสอบบัญชี...';document.getElementById('loginError').textContent='';
+      try {
+        const result=await apiPost({action:'login',username:document.getElementById('loginUsername').value.trim(),password:document.getElementById('loginPassword').value});
+        authState={token:result.token,user:result.user};sessionStorage.setItem('otair-session',JSON.stringify(authState));updateAuthUI();
+        document.getElementById('loginPassword').value='';closeModal('loginModal');
+        const action=pendingAuthAction;pendingAuthAction=null;if(action)action();
+      } catch(err) {document.getElementById('loginError').textContent=err.message;}
+      finally {button.disabled=false;button.textContent='เข้าสู่ระบบ';}
+    }
+    function handleAuthButton() {
+      if(!isLoggedIn()) return needAuth(()=>showToast('เข้าสู่ระบบแล้ว'));
+      presentOperation('ออกจากระบบ','ต้องการออกจากระบบใช่ไหม?','👤',[
+        {label:'ยกเลิก',run:()=>closeModal('operationModal'),secondary:true},
+        {label:'ออกจากระบบ',run:async()=>{const token=authState.token;clearAuth();closeModal('operationModal');try{await apiPost({action:'logout',token});}catch(_){} showToast('ออกจากระบบแล้ว');}}
+      ]);
+    }
+    function presentOperation(title,message,icon,buttons) {
+      document.getElementById('operationTitle').textContent=title;
+      document.getElementById('operationMessage').textContent=message;
+      document.getElementById('operationIcon').textContent=icon;
+      const actions=document.getElementById('operationActions');actions.replaceChildren();
+      buttons.forEach(item=>{const button=document.createElement('button');button.className=item.secondary?'btn-secondary':'btn-primary';button.textContent=item.label;button.onclick=item.run;actions.appendChild(button);});
+      openModal('operationModal');
+    }
+    function showResult(title,message,success,after) {
+      presentOperation(title,message,success?'✅':'⚠️',[{label:'รับทราบ',run:()=>{closeModal('operationModal');if(after)after();}}]);
+    }
+    async function performMutation(payload,title,onSuccess) {
+      if(operationBusy)return;
+      if(!isLoggedIn()) {needAuth(()=>performMutation(payload,title,onSuccess));return;}
+      operationBusy=true;++refreshSequence;closeModal('operationModal');
+      document.getElementById('loadingTitle').textContent=title+' กรุณารอสักครู่...';openModal('loadingModal');
+      document.getElementById('saveBtn').disabled=true;
+      try {
+        const result=await apiPost({...payload,token:authState.token});
+        if(onSuccess)onSuccess(result);
+        // Fetch does not claim that a successfully committed write failed if refresh fails.
+        await refreshAll(false);
+        closeModal('loadingModal');
+        const c=result.counts || {};
+        showResult('ดำเนินการสำเร็จ',`เพิ่ม ${c.inserted || 0} รายการ · แก้ไข ${c.updated || 0} รายการ · ลบ ${c.deleted || 0} รายการ\n${document.getElementById('statusText').textContent==='เชื่อมต่อแล้ว'?'ข้อมูลในหน้าจออัปเดตแล้ว':'บันทึกสำเร็จ แต่โหลดข้อมูลล่าสุดไม่สำเร็จ กรุณารีเฟรชข้อมูล'}`,true);
+      } catch(err) {
+        closeModal('loadingModal');
+        showResult('ดำเนินการไม่สำเร็จ',err.message,false,err.code==='AUTH_REQUIRED'?()=>needAuth(()=>showToast('เข้าสู่ระบบแล้ว กรุณาตรวจสอบและทำรายการอีกครั้ง')):null);
+      } finally {operationBusy=false;document.getElementById('saveBtn').disabled=false;document.getElementById('loadingTitle').textContent='กำลังโหลดข้อมูล...';}
+    }
+    function validateEntry(row) {
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(row.date || ''))throw new Error('กรุณาเลือกวันที่ให้ครบถ้วน');
+      const b=CONFIG.buildings.find(b=>b.name===row.building);
+      if(!b || !b.zones.includes(row.floorZone))throw new Error('กรุณาเลือกอาคารและโซนให้ถูกต้อง');
+      const validTime=t=>/^([01]\d|2[0-3]):(00|30)$/.test(t || '');
+      if(!validTime(row.startTime)||!validTime(row.stopTime))throw new Error('กรุณาเลือกเวลาเป็นช่วงละ 30 นาที');
+      if(entryDuration(row)<60)throw new Error('ทุกอาคารเปิดแอร์ขั้นต่ำ 1 ชั่วโมง กรุณาตรวจสอบเวลาเริ่ม–สิ้นสุด');
+      ['department','costCenter','remark'].forEach(k=>{if(String(row[k] || '').length>1000)throw new Error('ข้อความยาวเกิน 1,000 ตัวอักษร');});
+    }
+    function entryDuration(row) {let duration=timeToMins(row.stopTime)-timeToMins(row.startTime);if(duration<0)duration+=1440;return duration;}
+    function toDateKey(iso) {const p=iso.split('-');return `${p[2]}-${p[1]}-${p[0]}`;}
+    function parseIsoDate(iso) {
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(iso || ''))throw new Error('กรุณาเลือกวันที่ให้ครบถ้วน');
+      const [y,m,d]=iso.split('-').map(Number), dt=new Date(y,m-1,d,12);
+      if(y<2000||y>2200||dt.getFullYear()!==y||dt.getMonth()!==m-1||dt.getDate()!==d)throw new Error('วันที่ไม่ถูกต้อง');
+      return dt;
+    }
+    function getEntryDates(row) {
+      if(editingOldRecord || !row.dateMode || row.dateMode==='single') {parseIsoDate(row.date);return [row.date];}
+      if(row.dateMode==='multi') {
+        const dates=[...new Set(row.dates || [])].sort();if(!dates.length)throw new Error('กรุณาเลือกอย่างน้อย 1 วัน');dates.forEach(parseIsoDate);return dates;
+      }
+      const start=parseIsoDate(row.dateStart), end=parseIsoDate(row.dateEnd);
+      if(end<start)throw new Error('วันสิ้นสุดต้องไม่ก่อนวันเริ่มต้น');
+      const days=[];
+      for(let d=new Date(start);d<=end;d.setDate(d.getDate()+1)) {
+        if(!row.weekdaysOnly || (d.getDay()!==0 && d.getDay()!==6))days.push(toIsoDate(d));
+        if((d-start)/86400000>366)throw new Error('เลือกช่วงวันที่ได้ไม่เกิน 1 ปีต่อครั้ง');
+      }
+      if(!days.length)throw new Error('ช่วงวันที่เลือกไม่มีวันที่ตรงเงื่อนไข');return days;
+    }
+    function expandEntries() {
+      const result=[];
+      entryRows.forEach(row=>getEntryDates(row).forEach(date=>{const r={...row,date};validateEntry(r);result.push(r);}));
+      if(!result.length)throw new Error('ไม่มีรายการให้บันทึก');if(result.length>500)throw new Error('บันทึกได้ไม่เกิน 500 รายการต่อครั้ง');return result;
+    }
+    function mergeFields(a,b,separator) {return [...new Set([...(a?String(a).split(separator):[]),...(b?String(b).split(separator):[])].map(x=>x.trim()).filter(Boolean))].join(separator);}
+    function mergeWindow(existing,added) {
+      let eSt=timeToMins(existing.startTime),eSp=timeToMins(existing.stopTime),nSt=timeToMins(added.startTime),nSp=timeToMins(added.stopTime);
+      if(eSp<=eSt)eSp+=1440;if(nSp<=nSt)nSp+=1440;
+      return {...existing,startTime:minsToTime(Math.min(eSt,nSt)%1440),stopTime:minsToTime(Math.max(eSp,nSp)%1440)};
+    }
+    function buildSavePayload(expanded) {
+      const merged={};
+      expanded.forEach(row=>{
+        const date=toDateKey(row.date),key=[date,row.building,row.floorZone].join('|');
+        if(!merged[key])merged[key]={date,building:row.building,floorZone:row.floorZone,startTime:row.startTime,stopTime:row.stopTime,department:row.department || '',costCenter:row.costCenter || '',remark:row.remark || ''};
+        else {
+          const old=merged[key];merged[key]=mergeWindow(old,row);
+          ['department','costCenter','remark'].forEach(k=>merged[key][k]=mergeFields(old[k],row[k],k==='remark'?'|':','));
+        }
+      });
+      const data=Object.values(merged),inserts=[],updates=[];
+      if(editingOldRecord) updates.push({oldData:editingOldRecord,newData:data[0]});
+      else data.forEach(row=>{
+        const matches=SERVER_RECORDS.filter(r=>r.dateKey===row.date && r.building===row.building && r.floorZone===row.floorZone);
+        if(matches.length>1)throw new Error('พบข้อมูลเดิมซ้ำในวันและโซนเดียวกัน กรุณาแก้ไขข้อมูลเดิมก่อน');
+        const existing=matches[0];
+        if(existing)updates.push({oldData:existing,newData:mergeWindow(existing,row)});else inserts.push(row);
+      });
+      // Preserve legacy merge behavior, but never silently turn a >=24h merged span into 0h.
+      [...inserts,...updates.map(u=>u.newData)].forEach(r=>{if(entryDuration(r)<60)throw new Error('ช่วงเวลาที่รวมคิวไม่ถูกต้อง กรุณาตรวจสอบคิวข้ามวันหรือแก้ไขรายการเดิม');});
+      return {action:'manage',inserts,updates,deletes:[]};
+    }
+    function estimatePayload(payload) {
+      const ids=new Set(payload.updates.map(u=>u.oldData.id));
+      const changed=payload.inserts.concat(payload.updates.map(u=>u.newData)).map((r,i)=>({...r,dateKey:r.dateKey || r.date,_preview:i}));
+      const records=SERVER_RECORDS.filter(r=>!ids.has(r.id)).concat(changed);
+      return processRecordsForCost(records).filter(r=>r._preview!==undefined).reduce((n,r)=>n+r.totalCost,0);
+    }
+    function saveEntries() {
+      if(operationBusy)return;
+      if(!isLoggedIn())return needAuth(()=>saveEntries());
+      try {
+        const expanded=expandEntries(),payload=buildSavePayload(expanded), days=new Set(expanded.map(r=>r.date));
+        const price=estimatePayload(payload);
+        const details=[...new Set(expanded.map(r=>`${r.building} · ${r.floorZone} · ${r.startTime}–${r.stopTime}`))];
+        const dateList=[...days].sort().map(toDateKey);
+        presentOperation(editingOldRecord?'ยืนยันแก้ไขข้อมูล':'ตรวจสอบก่อนบันทึก',
+          `${days.size} วัน · เพิ่ม ${payload.inserts.length} รายการ · อัปเดต ${payload.updates.length} รายการ\nวันที่: ${dateList.slice(0,12).join(', ')}${dateList.length>12?' และอีก '+(dateList.length-12)+' วัน':''}\n${details.slice(0,8).join('\n')}${details.length>8?'\nและอีก '+(details.length-8)+' โซน':''}\nยอดประมาณการของคิวหลังบันทึก: ฿${price.toLocaleString('th-TH',{maximumFractionDigits:2})}\n${payload.updates.length && !editingOldRecord?'พบคิวเดิม: จะรวมเป็นช่วงเริ่มเร็วที่สุด–สิ้นสุดช้าที่สุดตามกติกาเดิม':''}`,
+          '📝',[{label:'กลับไปแก้ไข',secondary:true,run:()=>closeModal('operationModal')},{label:'ยืนยันบันทึก',run:()=>performMutation(payload,editingOldRecord?'กำลังแก้ไขข้อมูล':'กำลังบันทึกข้อมูล',()=>closeModal('formModal'))}]);
+      } catch(err) {showResult('กรุณาตรวจสอบข้อมูล',err.message,false);}
+    }
+    function deleteRecord(recordStr) {
+      needAuth(()=>{
+        let r;try{r=JSON.parse(decodeURIComponent(recordStr));}catch(_){return showResult('ข้อมูลไม่ถูกต้อง','กรุณาโหลดข้อมูลใหม่',false);}
+        presentOperation('ยืนยันลบข้อมูล',`${r.dateKey} · ${r.building}\n${r.floorZone} · ${r.startTime}–${r.stopTime}\nเมื่อลบแล้วจะไม่สามารถกู้คืนจากระบบได้`,'🗑️',[
+          {label:'ยกเลิก',secondary:true,run:()=>closeModal('operationModal')},
+          {label:'ยืนยันลบ',run:()=>performMutation({action:'manage',inserts:[],updates:[],deletes:[r]},'กำลังลบข้อมูล',()=>{closeModal('summaryModal');closeModal('detailModal');})}
+        ]);
+      });
+    }
+    function changeEntryBuilding(i,value) {entryRows[i].building=value;entryRows[i].floorZone=CONFIG.buildings.find(b=>b.name===value).zones[0];renderEntryRows();}
+    function setDateMode(i,mode) {const row=entryRows[i];row.dateMode=mode;row.dateStart=row.dateStart || row.date;row.dateEnd=row.dateEnd || row.date;row.dates=row.dates || [];renderEntryRows();}
+    function setEntryDate(i,key,value) {entryRows[i][key]=value;renderEntryRows();}
+    function toggleMultiDate(i,date) {const row=entryRows[i];row.dates=row.dates || [];if(row.dates.includes(date))row.dates=row.dates.filter(d=>d!==date);else row.dates.push(date);renderEntryRows();}
+    function multiCalendar(row,i) {
+      let month=row.calendarMonth || row.date.slice(0,7);if(!/^\d{4}-\d{2}$/.test(month))month=toIsoDate(new Date()).slice(0,7);
+      const [y,m]=month.split('-').map(Number),count=new Date(y,m,0).getDate(), first=new Date(y,m-1,1).getDay();
+      let grid=['อา','จ','อ','พ','พฤ','ศ','ส'].map(d=>`<span>${d}</span>`).join('');
+      grid+='<span></span>'.repeat(first);
+      for(let d=1;d<=count;d++) {const date=`${month}-${String(d).padStart(2,'0')}`,selected=(row.dates || []).includes(date);grid+=`<button type="button" aria-pressed="${selected}" class="${selected?'selected':''}" onclick="toggleMultiDate(${i},'${date}')">${d}</button>`;}
+      return `<div class="date-selector"><div class="date-selector-header"><b style="font-size:12px">แตะวันที่เพื่อเลือก</b><input type="month" value="${month}" onchange="entryRows[${i}].calendarMonth=this.value;renderEntryRows()"></div><div class="date-selector-grid">${grid}</div></div>`;
+    }
+    function renderDateControls(row,i) {
+      const mode=editingOldRecord?'single':(row.dateMode || 'single');
+      let html=`<div class="date-controls"><div class="date-head"><b style="font-size:13px">📅 วันที่ใช้งาน</b>${editingOldRecord?'':`<select aria-label="วิธีเลือกวัน" onchange="setDateMode(${i},this.value)">${[['single','วันเดียว'],['multi','เลือกหลายวัน'],['range','ช่วงวันที่']].map(([v,label])=>`<option value="${v}" ${v===mode?'selected':''}>${label}</option>`).join('')}</select>`}</div>`;
+      if(mode==='single')html+=`<div class="date-inputs"><input type="date" value="${escapeHtml(row.date)}" onchange="setEntryDate(${i},'date',this.value)"></div>`;
+      else if(mode==='multi') {
+        html+=multiCalendar(row,i)+`<div class="date-chip-list">${[...(row.dates || [])].sort().map(date=>`<button class="date-chip" onclick="toggleMultiDate(${i},'${date}')">${toDateKey(date)} ✕</button>`).join('')}</div>`;
+      } else html+=`<div class="date-inputs"><input type="date" aria-label="วันเริ่มต้น" value="${escapeHtml(row.dateStart || row.date)}" onchange="setEntryDate(${i},'dateStart',this.value)"><span>ถึง</span><input type="date" aria-label="วันสิ้นสุด" value="${escapeHtml(row.dateEnd || row.date)}" onchange="setEntryDate(${i},'dateEnd',this.value)"></div><label style="display:flex;gap:8px;align-items:center;font-size:12px;margin-top:12px"><input type="checkbox" ${row.weekdaysOnly?'checked':''} onchange="entryRows[${i}].weekdaysOnly=this.checked;renderEntryRows()">เฉพาะวันจันทร์–ศุกร์ (ยังไม่หักวันหยุดนักขัตฤกษ์)</label>`;
+      return html+'</div>';
+    }
+    function renderEntryPreviews() {
+      document.querySelectorAll('#entryList .entry-grid').forEach((grid,i)=>{
+        let preview=grid.querySelector('.row-preview');if(!preview){preview=document.createElement('div');preview.className='row-preview';grid.appendChild(preview);}
+        try {
+          const row=entryRows[i],dates=getEntryDates(row);validateEntry({...row,date:dates[0]});
+          const minutes=entryDuration(row),rate=row.building.includes('BTS')?1600:row.building.includes('ESV')?300:row.building.includes('KSL')?1625.2:1000;
+          const amount=minutes/60*rate*dates.length;
+          preview.textContent=`${dates.length} วัน · วันละ ${minutes/60} ชม. · ประมาณการเปิดเดี่ยว ฿${amount.toLocaleString('th-TH',{maximumFractionDigits:2})}${row.building.includes('Ari')?' (ยอดจริงปรับตามช่วงเปิดร่วม)':''}${timeToMins(row.stopTime)<timeToMins(row.startTime)?' · สิ้นสุดวันถัดไป':''}`;
+          preview.classList.remove('invalid');
+        } catch(err) {preview.textContent=err.message;preview.classList.add('invalid');}
+      });
+    }
+    function mobileSwitchTab(tabId) {
+      document.getElementById('scheduleSection').style.display=tabId==='schedule'?'flex':'none';
+      document.getElementById('analyticsSection').style.display=tabId==='analytics'?'flex':'none';
+      document.getElementById('navSchedule').classList.toggle('active',tabId==='schedule');
+      document.getElementById('navAnalytics').classList.toggle('active',tabId==='analytics');
+      document.getElementById('mobileSchedule').classList.toggle('active',tabId==='schedule');
+      document.getElementById('mobileAnalytics').classList.toggle('active',tabId==='analytics');
+      if(tabId==='analytics' && otChartInstance)otChartInstance.resize();
+    }
+    function fitSummaryNumbers(){
+      document.querySelectorAll('.kpi-card').forEach(card=>{
+        const root=card.children[1];if(!root)return;
+        const value=root.firstElementChild && root.firstElementChild.tagName==='DIV' ? root.firstElementChild : root;
+        const limit=card.clientWidth-parseFloat(getComputedStyle(card).paddingLeft)-parseFloat(getComputedStyle(card).paddingRight);
+        let size=innerWidth<=360?22:innerWidth<=600?25:31;
+        value.style.setProperty('font-size',size+'px','important');
+        while(value.scrollWidth>limit && size>14){size--;value.style.setProperty('font-size',size+'px','important');}
+      });
+    }
+    const calculateBalancedOriginal=calculateAndRenderDashboard;
+    calculateAndRenderDashboard=function(){calculateBalancedOriginal();requestAnimationFrame(fitSummaryNumbers);};
+    window.addEventListener('resize',()=>requestAnimationFrame(fitSummaryNumbers));
+    const renderCalendarBalancedOriginal=renderCalendar;
+    renderCalendar=function(mm,yyyy){
+      renderCalendarBalancedOriginal(mm,yyyy);
+      const weeks=Math.ceil((new Date(yyyy,mm-1,1).getDay()+new Date(yyyy,mm,0).getDate())/7);
+      document.getElementById('calendarGrid').style.gridTemplateRows='28px repeat('+weeks+',minmax(0,1fr))';
+    };
+    const openModalOriginal=openModal;
+    openModal=function(id) {
+      const modal=document.getElementById(id);modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');modal.tabIndex=-1;
+      openModalOriginal(id);
+      setTimeout(()=>{if(modal.classList.contains('show'))(modal.querySelector('button:not([disabled]),input:not([disabled]),select:not([disabled])') || modal).focus();},50);
+    };
+    document.addEventListener('keydown',event=>{
+      const modals=[...document.querySelectorAll('.modal.show')].sort((a,b)=>Number(getComputedStyle(b).zIndex)-Number(getComputedStyle(a).zIndex) || [...document.querySelectorAll('.modal')].indexOf(b)-[...document.querySelectorAll('.modal')].indexOf(a));
+      const modal=modals[0];if(!modal)return;
+      if(event.key==='Escape') {event.preventDefault();return;}
+      if(event.key!=='Tab')return;
+      const nodes=[...modal.querySelectorAll('button:not([disabled]),input:not([disabled]),select:not([disabled]),[tabindex="0"]')].filter(n=>n.getClientRects().length>0);
+      if(!nodes.length){event.preventDefault();modal.focus();return;}
+      const first=nodes[0],last=nodes[nodes.length-1];
+      if(event.shiftKey && (document.activeElement===first || !modal.contains(document.activeElement))){event.preventDefault();last.focus();}
+      else if(!event.shiftKey && (document.activeElement===last || !modal.contains(document.activeElement))){event.preventDefault();first.focus();}
+    });
+    const switchTabOriginal=switchTab;
+    switchTab=function(tabId){switchTabOriginal(tabId);document.getElementById('mobileSchedule').classList.toggle('active',tabId==='schedule');document.getElementById('mobileAnalytics').classList.toggle('active',tabId==='analytics');};
+    document.addEventListener('DOMContentLoaded',()=>{
+      updateAuthUI();
+      if(isLoggedIn())apiPost({action:'session',token:authState.token}).catch(err=>{if(err.code==='AUTH_REQUIRED')clearAuth();});
+      // Keep previews updated for text fields without replacing the input being edited.
+      document.getElementById('entryList').addEventListener('change',()=>renderEntryPreviews());
+      document.getElementById('operationModal').addEventListener('keydown',e=>{if(e.key==='Escape')e.preventDefault();});
+    });
+
   </script>
 </body>
+</html>
 </html>
