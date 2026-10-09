@@ -514,7 +514,8 @@
             <span id="themeIconWrap">☀️</span> <span id="themeText">โหมดกลางวัน</span>
           </button>
           <button class="btn-secondary auth-button" id="authButton" onclick="handleAuthButton()"><span id="authLabel">🔐 เข้าสู่ระบบ</span></button>
-          <div class="update-indicator" id="loadingStatus"><span class="dot"></span> <span id="statusText">กำลังซิงค์...</span></div>
+          <button class="btn-secondary" id="refreshDataButton" onclick="refreshAll(true)" title="ดึงข้อมูลล่าสุดจาก Google Sheet">🔄 รีเฟรชข้อมูล</button>
+          <div style="display:flex;flex-direction:column;gap:3px"><div class="update-indicator" id="loadingStatus"><span class="dot"></span> <span id="statusText">กำลังซิงค์...</span></div><span id="lastUpdatedText" aria-live="polite" style="font-size:10px;color:var(--muted)">ยังไม่ได้โหลดข้อมูล</span></div>
         </div>
       </header>
 
@@ -749,7 +750,6 @@
     let SERVER_RECORDS = []; 
     let PROCESSED_RECORDS = []; 
     let editingOldRecord = null;
-    let autoRefreshTimer;
     let otChartInstance = null;
     let currentlySelectedCalendarDate = null;
     let currentBuildingFilter = 'All'; // ตัวแปรเก็บตึกที่เลือกล่าสุด
@@ -759,7 +759,6 @@
       const todayIso = toIsoDate(new Date());
       document.getElementById('selectedDate').value = todayIso;
       refreshAll(true);
-      startAutoRefresh();
       
       let chkHtml = '';
       monthNamesTH.forEach((m, index) => {
@@ -818,39 +817,43 @@
     function minsToTime(mins) { return `${String(Math.floor(mins / 60)).padStart(2,'0')}:${String(mins % 60).padStart(2,'0')}`; }
 
     // ============================ Data Fetching ============================
-    function refreshAll(isManualTrigger = false) {
+    let refreshInFlight = null;
+    let lastUpdatedAt = null;
+    async function refreshAll(isManualTrigger = false) {
+      if (operationBusy && isManualTrigger) return false;
+      if (refreshInFlight) return refreshInFlight;
       if (isManualTrigger) openModal('loadingModal');
-      document.getElementById('statusText').innerText = "กำลังซิงค์...";
-      
-      const refreshId=++refreshSequence;
-      return fetchWithTimeout(`${API_URL}?action=getData`,{},25000)
-        .then(response => response.json())
-        .then(result => {
-          if(refreshId !== refreshSequence) return;
-          if (result.status === 'success') {
-            SERVER_RECORDS = result.data || [];
-            updateMonthSelector(); 
-            calculateAndRenderDashboard(); 
-            renderScheduleDashboard(document.getElementById('selectedDate').value);
-            document.getElementById('statusText').innerText = "เชื่อมต่อแล้ว";
-          } else {
-            document.getElementById('statusText').innerText = "ข้อผิดพลาด API";
-          }
-        })
-        .catch(err => {
+      const button = document.getElementById('refreshDataButton');
+      button.disabled = true;
+      document.getElementById('statusText').innerText = 'กำลังซิงค์...';
+      const refreshId = ++refreshSequence;
+      const task = (async () => {
+        try {
+          const response = await fetchWithTimeout(`${API_URL}?action=getData`, {cache:'no-store'}, 25000);
+          const result = await response.json();
+          if (refreshId !== refreshSequence) return false;
+          if (!response.ok || result.status !== 'success' || !Array.isArray(result.data)) throw new Error(result.message || 'โหลดข้อมูลไม่สำเร็จ');
+          SERVER_RECORDS = result.data;
+          updateMonthSelector();
+          calculateAndRenderDashboard();
+          renderScheduleDashboard(document.getElementById('selectedDate').value);
+          lastUpdatedAt = new Date();
+          document.getElementById('lastUpdatedText').textContent = 'อัปเดตล่าสุด ' + lastUpdatedAt.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit',second:'2-digit'}) + ' น.';
+          document.getElementById('statusText').innerText = 'เชื่อมต่อแล้ว';
+          return true;
+        } catch (err) {
+          if (refreshId !== refreshSequence) return false;
           console.error(err);
-          document.getElementById('statusText').innerText = "ออฟไลน์";
-        })
-        .finally(() => {
+          document.getElementById('statusText').innerText = 'โหลดข้อมูลไม่สำเร็จ';
+          if (isManualTrigger) showResult('รีเฟรชข้อมูลไม่สำเร็จ', 'กรุณากดรีเฟรชอีกครั้ง ข้อมูลที่โหลดไว้ยังแสดงอยู่', false);
+          return false;
+        } finally {
+          button.disabled = false;
           if (isManualTrigger && !operationBusy) closeModal('loadingModal');
-        });
-    }
-
-    function startAutoRefresh() {
-      clearInterval(autoRefreshTimer);
-      autoRefreshTimer = setInterval(() => {
-        if (!operationBusy && !document.querySelector('.modal.show')) refreshAll(false); 
-      }, 15000); 
+        }
+      })();
+      refreshInFlight = task;
+      try { return await task; } finally { if(refreshInFlight === task) refreshInFlight = null; }
     }
 
     function handleSidebarDateChange() { renderScheduleDashboard(document.getElementById('selectedDate').value); }
@@ -1176,7 +1179,7 @@
                 let dur = calculateDuration(r.startTime, r.stopTime);
                 let payload = encodeURIComponent(JSON.stringify(r)).replace(/'/g, "%27");
                 html += `
-                  <div style="border-left: 3px solid var(--primary-2); padding: 12px; background: var(--surface-2); border-radius: 8px; border-right: 1px solid var(--border); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); cursor:pointer;" onclick="openFormModalForEdit('${payload}')" title="คลิกเพื่อแก้ไข">
+                  <div style="border-left: 3px solid var(--primary-2); padding: 12px; background: var(--surface-2); border-radius: 8px; border-right: 1px solid var(--border); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); ">
                      <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
                         <b style="color:var(--text); font-size:14px;">📍 ${escapeHtml(r.floorZone)}</b>
                         <span style="font-size:13px; font-weight:700; color:var(--primary-2);">⏱️ ${r.startTime}-${r.stopTime}</span>
@@ -1186,6 +1189,10 @@
                         <span style="background:var(--surface); border:1px solid var(--border); padding:2px 8px; border-radius:4px;">CC: ${escapeHtml(r.costCenter || '-')}</span>
                         <span style="font-weight:700; color:var(--danger);">฿${r.totalCost.toLocaleString('th-TH', {minimumFractionDigits:0, maximumFractionDigits:2})}</span>
                         <span style="margin-left:auto; font-weight:600;">⏳ ${dur}</span>
+                     </div>
+                     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px;flex-wrap:wrap">
+                       <button class="btn-secondary" style="padding:8px 12px;font-size:12px;min-height:36px" onclick="openFormModalForEdit('${payload}')" aria-label="แก้ไข ${escapeHtml(r.floorZone)}">✏️ แก้ไข</button>
+                       <button class="btn-danger" style="padding:8px 12px;font-size:12px;min-height:36px" onclick="deleteRecord('${payload}')" aria-label="ลบ ${escapeHtml(r.floorZone)}">🗑️ ลบข้อมูล</button>
                      </div>
                   </div>
                 `;
@@ -1603,10 +1610,12 @@
         const result=await apiPost({...payload,token:authState.token});
         if(onSuccess)onSuccess(result);
         // Fetch does not claim that a successfully committed write failed if refresh fails.
-        await refreshAll(false);
+        // Finish any stale pre-write read, then explicitly fetch committed data.
+        if(refreshInFlight) await refreshInFlight;
+        const refreshed = await refreshAll(false);
         closeModal('loadingModal');
         const c=result.counts || {};
-        showResult('ดำเนินการสำเร็จ',`เพิ่ม ${c.inserted || 0} รายการ · แก้ไข ${c.updated || 0} รายการ · ลบ ${c.deleted || 0} รายการ\n${document.getElementById('statusText').textContent==='เชื่อมต่อแล้ว'?'ข้อมูลในหน้าจออัปเดตแล้ว':'บันทึกสำเร็จ แต่โหลดข้อมูลล่าสุดไม่สำเร็จ กรุณารีเฟรชข้อมูล'}`,true);
+        showResult('ดำเนินการสำเร็จ',`เพิ่ม ${c.inserted || 0} รายการ · แก้ไข ${c.updated || 0} รายการ · ลบ ${c.deleted || 0} รายการ\n${refreshed?'ข้อมูลในหน้าจออัปเดตแล้ว':'บันทึกสำเร็จแล้ว แต่รีเฟรชข้อมูลไม่สำเร็จ กรุณากดรีเฟรชอีกครั้ง'}`,true);
       } catch(err) {
         closeModal('loadingModal');
         showResult('ดำเนินการไม่สำเร็จ',err.message,false,err.code==='AUTH_REQUIRED'?()=>needAuth(()=>showToast('เข้าสู่ระบบแล้ว กรุณาตรวจสอบและทำรายการอีกครั้ง')):null);
